@@ -4,6 +4,8 @@
 
 一款运行在浏览器中的 DIY 光谱仪软件,UI 与功能参考 [Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer) 设计。
 
+**▶ 在线使用:[spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)**——无需安装,用 Chrome 打开即可。
+
 ![荧光灯发射光谱](images/screenshot1.png)
 
 *荧光灯发射光谱:波长轴经 436/546nm 汞线校准后,谱线峰位自动标注;右侧为 Info 实时参数窗口*

@@ -4,6 +4,8 @@
 
 Um aplicativo de espectrômetro DIY que roda no navegador, com interface e funcionalidades inspiradas no [Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer).
 
+**▶ Experimente agora: [spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)** — sem instalação, basta abrir no Chrome.
+
 ![Espectro de emissão de lâmpada fluorescente](images/screenshot1.png)
 
 *Espectro de emissão de uma lâmpada fluorescente: após calibrar o eixo de comprimentos de onda com as linhas de mercúrio de 436/546 nm, os picos são rotulados automaticamente; a janela Info à direita mostra os parâmetros em tempo real*

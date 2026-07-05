@@ -4,6 +4,8 @@
 
 一款運行在瀏覽器中的 DIY 光譜儀軟體,UI 與功能參考 [Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer) 設計。
 
+**▶ 線上使用:[spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)**——無需安裝,用 Chrome 開啟即可。
+
 ![螢光燈發射光譜](images/screenshot1.png)
 
 *螢光燈發射光譜:波長軸經 436/546nm 汞線校準後,譜線峰位自動標註;右側為 Info 即時參數視窗*

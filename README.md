@@ -4,6 +4,8 @@
 
 A DIY spectrometer application that runs in your browser, with UI and features inspired by [Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer).
 
+**▶ Try it now: [spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)** — no installation, just open it in Chrome.
+
 ![Fluorescent lamp emission spectrum](docs/images/screenshot1.png)
 
 *Fluorescent lamp emission spectrum: after calibrating the wavelength axis with the 436/546 nm mercury lines, peak positions are labeled automatically; the Info window on the right shows live parameters*
