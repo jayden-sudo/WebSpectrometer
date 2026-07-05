@@ -1,0 +1,17 @@
+{
+  "name": "Web Spectrometer",
+  "short_name": "Spectrometer",
+  "description": "Free, open-source DIY spectrometer software that runs in the browser",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f8ff",
+  "theme_color": "#fff5d2",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

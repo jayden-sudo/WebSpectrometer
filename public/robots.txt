@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://web-spectrometer.vercel.app/sitemap.xml

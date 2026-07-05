@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- NOTE: replace https://web-spectrometer.vercel.app with the real production URL after deployment -->
+    <title>Web Spectrometer — Free Browser-Based DIY Spectrometer Software</title>
+    <meta
+      name="description"
+      content="Free, open-source spectrometer software that runs in your browser. Turn a webcam and a diffraction grating into a real spectrometer: live spectrum analysis, wavelength calibration with fluorescent lamps, peak detection, and CSV export. Works on Linux, macOS and Windows with Chrome."
+    />
+    <meta
+      name="keywords"
+      content="spectrometer, DIY spectrometer, web spectrometer, spectroscopy, webcam spectrometer, diffraction grating, spectrum analysis, wavelength calibration, emission spectrum, open source, Theremino alternative"
+    />
+    <meta name="author" content="Web Spectrometer contributors" />
+    <link rel="canonical" href="https://web-spectrometer.vercel.app/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Web Spectrometer" />
+    <meta property="og:title" content="Web Spectrometer — Free Browser-Based DIY Spectrometer Software" />
+    <meta
+      property="og:description"
+      content="Turn a webcam and a diffraction grating into a real spectrometer, right in your browser. Live spectrum analysis, wavelength calibration, peak detection, CSV export. Free and open source."
+    />
+    <meta property="og:url" content="https://web-spectrometer.vercel.app/" />
+    <meta property="og:image" content="https://web-spectrometer.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Web Spectrometer showing a calibrated fluorescent lamp emission spectrum with labeled mercury peaks" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Web Spectrometer — Free Browser-Based DIY Spectrometer Software" />
+    <meta
+      name="twitter:description"
+      content="Turn a webcam and a diffraction grating into a real spectrometer, right in your browser. Free and open source."
+    />
+    <meta name="twitter:image" content="https://web-spectrometer.vercel.app/og-image.png" />
+
+    <meta name="theme-color" content="#fff5d2" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23f0f8ff'/%3E%3Cpath d='M1 13 L4 12 L6 4 L8 12 L11 6 L13 11 L15 10' stroke='%23004600' fill='none'/%3E%3C/svg%3E"
+    />
+
+    <!-- Structured data for search engines and AI agents -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Web Spectrometer",
+        "url": "https://web-spectrometer.vercel.app/",
+        "description": "Free, open-source spectrometer software that runs in the browser. It converts the spectral image captured by a webcam (or a TCD1304/TCD1254 linear sensor over Web Serial) into a live spectrum curve, with multi-point wavelength calibration, peak/dip detection, filtering, irradiance correction and CSV/TXT export compatible with Theremino Spectrometer files.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any (requires Google Chrome)",
+        "browserRequirements": "Requires the latest Google Chrome; camera access requires HTTPS",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+        "screenshot": "https://web-spectrometer.vercel.app/og-image.png",
+        "inLanguage": ["en", "zh-CN", "zh-TW", "it", "fr", "pt"],
+        "featureList": [
+          "Live spectrum analysis from a webcam",
+          "Multi-point wavelength calibration (Trim points) with fluorescent lamp mercury lines 436/546 nm",
+          "Peak and dip detection with wavelength labels",
+          "Real-time filtering: averaging, rising/falling speed, spatial averaging, reference and background subtraction",
+          "Wavelength-colored spectrum rendering and logarithmic scale",
+          "Irradiance coefficient correction",
+          "CSV/TXT data export compatible with Theremino Spectrometer",
+          "TCD1304/TCD1254 linear sensor support via Web Serial",
+          "6-language interface"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <!-- Static pre-render content: visible to crawlers and AI agents that do not execute JavaScript; replaced by the app on load -->
+      <main style="font-family: sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px">
+        <h1>Web Spectrometer</h1>
+        <p>
+          A free, open-source DIY spectrometer application that runs entirely in your browser. Point a webcam at a
+          diffraction grating and get a live, calibrated emission spectrum — no installation required.
+        </p>
+        <h2>What you can do</h2>
+        <ul>
+          <li>Analyze light sources: measure emission lines of fluorescent lamps, LEDs and lasers in real time.</li>
+          <li>Calibrate the wavelength axis with multi-point trim against the 436/546 nm mercury lines.</li>
+          <li>Detect and label spectral peaks and dips automatically.</li>
+          <li>Export spectra as CSV/TXT files compatible with Theremino Spectrometer for Windows.</li>
+          <li>Use TCD1304/TCD1254 linear CCD sensors over Web Serial for higher resolution.</li>
+        </ul>
+        <p>
+          Requires the latest Google Chrome. Works on Linux, macOS and Windows. UI and features are inspired by
+          Theremino Spectrometer; this is an independent web implementation licensed under GNU GPL v3.
+        </p>
+        <p>Loading the application requires JavaScript. If nothing appears here, please enable JavaScript.</p>
+      </main>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

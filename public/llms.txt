@@ -1,0 +1,34 @@
+# Web Spectrometer
+
+> Free, open-source DIY spectrometer software that runs entirely in the browser. It converts the spectral image captured by a webcam (or a TCD1304/TCD1254 linear CCD sensor over Web Serial) into a live, calibrated spectrum curve.
+
+## What it is
+
+Web Spectrometer turns a webcam plus a diffraction grating into a working optical spectrometer. It is an independent web implementation whose UI and features are inspired by Theremino Spectrometer (Windows-only); this project brings the same workflow to Linux, macOS and Windows via Google Chrome. License: GNU GPL v3.
+
+## Key capabilities
+
+- Live spectrum analysis: real-time conversion of the camera ROI into a spectrum curve at the camera frame rate.
+- Wavelength calibration: multi-point "Trim points" calibration; the standard workflow uses the 436 nm and 546 nm mercury lines of any fluorescent lamp. Calibration data persists in the browser (localStorage) and is file-compatible with Theremino Spectrometer calibration files.
+- Peak/dip detection with automatic wavelength labels.
+- Filtering pipeline: frame averaging, rising/falling speed (IIR), spatial averaging, reference normalization and background subtraction.
+- Display: wavelength-true coloring (380-780 nm), logarithmic intensity scale, zoom/pan.
+- Data export: CSV/TXT spectrum files (TAB/semicolon/comma separators) interchangeable with the Windows Theremino Spectrometer; JPG/PNG image export; timed and repeated auto-save.
+- Hardware: any UVC webcam; optionally TCD1304/TCD1254 linear CCD sensors via Web Serial (1 Mbaud, Theremino Master protocol).
+- Interface languages: English, Simplified Chinese, Traditional Chinese, Italian, French, Portuguese.
+
+## How to use (typical flow)
+
+1. Open the site in the latest Google Chrome (camera requires HTTPS).
+2. Connect the webcam of the DIY spectrometer (webcam + diffraction grating + slit).
+3. Calibrate once: Tools → Trim points → Fluorescent 436 546, then drag the 436/546 labels onto the mercury lines of a fluorescent lamp.
+4. Analyze any light source; save data files or images as needed.
+
+## Documentation
+
+- README (English): /README.md in the source repository
+- Translations: Simplified Chinese, Traditional Chinese, Italian, French, Portuguese under /docs/ in the repository
+
+## Credits
+
+UI and functionality inspired by Theremino Spectrometer. Special thanks to www.theremino.com and Stefano Marchetti, whose work is published under a "No Copyright" policy.
