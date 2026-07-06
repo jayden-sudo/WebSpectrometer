@@ -24,11 +24,12 @@ Web Spectrometer turns a webcam plus a diffraction grating into a working optica
 3. Calibrate once: Tools → Trim points → Fluorescent 436 546, then drag the 436/546 labels onto the mercury lines of a fluorescent lamp.
 4. Analyze any light source; save data files or images as needed.
 
-## Documentation
+## Documentation and source
 
-- README (English): /README.md in the source repository
+- Source repository: https://github.com/jayden-sudo/WebSpectrometer
+- README (English): https://github.com/jayden-sudo/WebSpectrometer/blob/main/README.md
 - Translations: Simplified Chinese, Traditional Chinese, Italian, French, Portuguese under /docs/ in the repository
 
 ## Credits
 
-UI and functionality inspired by Theremino Spectrometer. Special thanks to www.theremino.com and Stefano Marchetti, whose work is published under a "No Copyright" policy.
+An AI-assisted implementation created by Jayden (https://x.com/jayden_sudo) with reference to Theremino Spectrometer. UI and functionality inspired by Theremino Spectrometer. Special thanks to www.theremino.com and Stefano Marchetti, whose work is published under a "No Copyright" policy. License: GNU GPL v3.

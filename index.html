@@ -38,6 +38,7 @@
       content="Turn a webcam and a diffraction grating into a real spectrometer, right in your browser. Free and open source."
     />
     <meta name="twitter:image" content="https://spectrometer-web.vercel.app/og-image.png" />
+    <meta name="twitter:creator" content="@jayden_sudo" />
 
     <meta name="theme-color" content="#fff5d2" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -53,7 +54,15 @@
         "@type": "WebApplication",
         "name": "Web Spectrometer",
         "url": "https://spectrometer-web.vercel.app/",
-        "description": "Free, open-source spectrometer software that runs in the browser. It converts the spectral image captured by a webcam (or a TCD1304/TCD1254 linear sensor over Web Serial) into a live spectrum curve, with multi-point wavelength calibration, peak/dip detection, filtering, irradiance correction and CSV/TXT export compatible with Theremino Spectrometer files.",
+        "description": "Free, open-source spectrometer software that runs in the browser. It converts the spectral image captured by a webcam (or a TCD1304/TCD1254 linear sensor over Web Serial) into a live spectrum curve, with multi-point wavelength calibration, peak/dip detection, filtering, irradiance correction and CSV/TXT export compatible with Theremino Spectrometer files. This is an AI-assisted implementation created by Jayden with reference to Theremino Spectrometer.",
+        "author": {
+          "@type": "Person",
+          "name": "Jayden",
+          "url": "https://github.com/jayden-sudo",
+          "sameAs": ["https://x.com/jayden_sudo", "https://github.com/jayden-sudo"]
+        },
+        "sameAs": ["https://github.com/jayden-sudo/WebSpectrometer"],
+        "isBasedOn": "https://www.theremino.com/en/downloads/automation#spectrometer",
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": "Any (requires Google Chrome)",
         "browserRequirements": "Requires the latest Google Chrome; camera access requires HTTPS",
@@ -77,27 +86,92 @@
   </head>
   <body>
     <div id="root">
-      <!-- Static pre-render content: visible to crawlers and AI agents that do not execute JavaScript; replaced by the app on load -->
-      <main style="font-family: sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px">
-        <h1>Web Spectrometer</h1>
-        <p>
-          A free, open-source DIY spectrometer application that runs entirely in your browser. Point a webcam at a
-          diffraction grating and get a live, calibrated emission spectrum — no installation required.
-        </p>
-        <h2>What you can do</h2>
-        <ul>
-          <li>Analyze light sources: measure emission lines of fluorescent lamps, LEDs and lasers in real time.</li>
-          <li>Calibrate the wavelength axis with multi-point trim against the 436/546 nm mercury lines.</li>
-          <li>Detect and label spectral peaks and dips automatically.</li>
-          <li>Export spectra as CSV/TXT files compatible with Theremino Spectrometer for Windows.</li>
-          <li>Use TCD1304/TCD1254 linear CCD sensors over Web Serial for higher resolution.</li>
-        </ul>
-        <p>
-          Requires the latest Google Chrome. Works on Linux, macOS and Windows. UI and features are inspired by
-          Theremino Spectrometer; this is an independent web implementation licensed under GNU GPL v3.
-        </p>
-        <p>Loading the application requires JavaScript. If nothing appears here, please enable JavaScript.</p>
-      </main>
+      <!-- Static pre-render content: visible to crawlers and AI agents that do not execute
+           JavaScript, and shown briefly to users while the app bundle loads; replaced by the
+           app on mount. Styled inline to match the app's look without external resources. -->
+      <style>
+        @keyframes ws-scan {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(400%); }
+        }
+      </style>
+      <div
+        style="
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgb(240, 248, 255);
+          font-family: Tahoma, 'Segoe UI', sans-serif;
+          color: rgb(40, 40, 40);
+          padding: 24px 16px;
+          box-sizing: border-box;
+        "
+      >
+        <main
+          style="
+            max-width: 640px;
+            width: 100%;
+            background: rgb(255, 245, 210);
+            border: 1px solid rgb(190, 180, 150);
+            border-radius: 8px;
+            box-shadow: 0 8px 30px rgba(120, 100, 40, 0.18);
+            padding: 32px 36px 26px;
+            box-sizing: border-box;
+          "
+        >
+          <h1 style="margin: 0 0 4px; font-size: 26px; letter-spacing: 0.5px">Web Spectrometer</h1>
+          <!-- spectrum accent bar with a moving scan highlight = loading indicator -->
+          <div style="position: relative; height: 10px; border-radius: 5px; overflow: hidden; margin: 10px 0 18px">
+            <div
+              style="
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                  to right,
+                  #1a001a, #4b0082, #0000e0, #00a0ff, #00c800,
+                  #b8e000, #ffd000, #ff7000, #e00000, #400000
+                );
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 25%;
+                background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.75), transparent);
+                animation: ws-scan 1.6s linear infinite;
+              "
+            ></div>
+          </div>
+          <p style="margin: 0 0 14px; line-height: 1.55">
+            A free, open-source DIY spectrometer that runs entirely in your browser. Point a webcam at a diffraction
+            grating and get a live, calibrated emission spectrum — no installation required.
+          </p>
+          <ul style="margin: 0 0 14px; padding-left: 20px; line-height: 1.65">
+            <li>Analyze light sources: emission lines of fluorescent lamps, LEDs and lasers in real time</li>
+            <li>Multi-point wavelength calibration against the 436/546 nm mercury lines</li>
+            <li>Automatic peak/dip detection, CSV/TXT export compatible with Theremino Spectrometer</li>
+            <li>TCD1304/TCD1254 linear CCD sensors supported via Web Serial</li>
+          </ul>
+          <p style="margin: 0 0 18px; font-size: 12px; color: rgb(110, 100, 70); line-height: 1.5">
+            Requires the latest Google Chrome · Works on Linux, macOS and Windows · GNU GPL v3.
+            An AI-assisted implementation by Jayden, created with reference to Theremino Spectrometer.
+          </p>
+          <p style="margin: 0; font-size: 12px; border-top: 1px solid rgb(220, 205, 160); padding-top: 12px">
+            <span style="color: rgb(110, 100, 70)">Loading the application…</span>
+            <noscript><strong>JavaScript is required — please enable it to run the app.</strong></noscript>
+            <span style="float: right">
+              <a href="https://github.com/jayden-sudo/WebSpectrometer" style="color: rgb(140, 90, 0)">GitHub</a>
+              &nbsp;·&nbsp;
+              <a href="https://x.com/jayden_sudo" style="color: rgb(140, 90, 0)">@jayden_sudo</a>
+              &nbsp;·&nbsp;
+              <a href="https://www.theremino.com" style="color: rgb(140, 90, 0)">theremino.com</a>
+            </span>
+          </p>
+        </main>
+      </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

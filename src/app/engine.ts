@@ -74,11 +74,18 @@ camera.onFrame = (frame) => {
   const { settings } = getState()
   lastRoi = frame
 
-  // Sample count = camera width; on change, rebuild the pipeline and proportionally rescale calibration
-  if (pipeline.numSamples !== frame.width) {
+  // Calibration rescale must key off calibrationSamples, NOT pipeline size:
+  // after a reload the stored calibration is re-materialized on a 3600-sample
+  // basis while the pipeline may already match the camera width, so tying the
+  // rescale to the pipeline rebuild silently skipped it (calibration lost on refresh)
+  {
     const st = getState()
-    const newCalib = rescaleCalibration(st.calibration, st.calibrationSamples, frame.width)
-    setCalibration(newCalib, frame.width)
+    if (st.calibrationSamples !== frame.width) {
+      setCalibration(rescaleCalibration(st.calibration, st.calibrationSamples, frame.width), frame.width)
+    }
+  }
+  // Sample count = camera width; on change, rebuild the pipeline
+  if (pipeline.numSamples !== frame.width) {
     pipeline = createPipelineState(frame.width)
     setRuntime({ numSamples: frame.width })
   }
@@ -199,9 +206,11 @@ tcd.onFrame = (frame) => {
   }
 
   const n = frame.samples.length
+  // Same decoupling as camera.onFrame: rescale keyed off calibrationSamples
+  if (st.calibrationSamples !== n) {
+    setCalibration(rescaleCalibration(st.calibration, st.calibrationSamples, n), n)
+  }
   if (pipeline.numSamples !== n) {
-    const newCalib = rescaleCalibration(st.calibration, st.calibrationSamples, n)
-    setCalibration(newCalib, n)
     pipeline = createPipelineState(n)
     setRuntime({ numSamples: n })
   }
@@ -279,8 +288,12 @@ export function loadDataIntoPipeline(nms: number[], values: number[]): void {
   pipeline.nmMax = nms[n - 1] ?? 1000
   pipeline.reference = null
   pipeline.background = null
-  // Calibration becomes two-point linear (the file's NmMin~NmMax)
-  setCalibration({ bins: [0, n], nms: [pipeline.nmMin, pipeline.nmMax] }, n)
+  // Deliberately do NOT touch calibration state here: the file's nm axis lives
+  // in pipeline.nmMin/nmMax only, matching the original program where loading a
+  // data file never modifies the Calib arrays. Writing it via setCalibration
+  // would clobber the user's persisted calibration in localStorage — the
+  // LastSpectrum load at startup used to destroy the fluorescent-lamp
+  // calibration exactly this way (calibration-lost-on-refresh bug).
   setRuntime({ numSamples: n, referenceOn: false, backgroundOn: false })
   notifyFrame()
 }

@@ -149,6 +149,18 @@ function AboutDialog({ onClose }: { onClose: () => void }) {
         </p>
         <p style={{ margin: '8px 0' }}>Visible, UVA and Near Infrared Spectrometer</p>
         <p style={{ margin: '8px 0', fontSize: 11, color: 'rgb(90,90,90)' }}>
+          An AI-assisted implementation by the author, created with reference to Theremino Spectrometer
+        </p>
+        <p style={{ margin: '8px 0', fontSize: 11 }}>
+          <a href="https://github.com/jayden-sudo/WebSpectrometer" target="_blank" rel="noreferrer">
+            github.com/jayden-sudo/WebSpectrometer
+          </a>
+          {' · '}
+          <a href="https://x.com/jayden_sudo" target="_blank" rel="noreferrer">
+            @jayden_sudo
+          </a>
+        </p>
+        <p style={{ margin: '8px 0', fontSize: 11, color: 'rgb(90,90,90)' }}>
           Special thanks to{' '}
           <a href="https://www.theremino.com" target="_blank" rel="noreferrer">
             www.theremino.com
