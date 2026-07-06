@@ -14,6 +14,7 @@ import {
 import {
   createPipelineState,
   processFrame,
+  runDisplayStages,
   snapshotBackground,
   snapshotReference,
   resetSpectrumData,
@@ -127,6 +128,9 @@ export async function connectCamera(): Promise<void> {
   const idx = Number.parseInt(settings.VideoInDevice, 10)
   const dev = videoDevs[Number.isFinite(idx) ? idx : 0]
   const res = await camera.connect(dev?.deviceId, w || 1920, h || 1080, settings.VideoFPS)
+  // OpenWebCam calls Spectrometer_ResetAllData + AverageStart: reconnecting at the same
+  // resolution must start from cleared arrays, not decay the previous spectrum
+  resetSpectrumData(pipeline)
   setRuntime({
     connected: true,
     resolution: `${res.width} x ${res.height}`,
@@ -179,6 +183,8 @@ export function syncTcdOptions(): void {
 export async function connectTcd(): Promise<void> {
   syncTcdOptions()
   await tcd.connect()
+  // OpenComm calls Spectrometer_ResetAllData + AverageStart (same as the webcam path)
+  resetSpectrumData(pipeline)
   setRuntime({
     connected: true,
     resolution: String(tcd.options.resolution),
@@ -217,8 +223,15 @@ tcd.onFrame = (frame) => {
 
   const adcScale = tcd.options.adcScale
   const scaleCoeff = Math.floor(65536 / adcScale)
-  // AdcMin Auto = actual received minimum (capped at AdcMax − AdcScale/8)
-  const adcMin = s.AdcMinAuto ? Math.min(frame.valueMin, s.AdcMax - adcScale / 8) : s.AdcMin
+  // AdcMin Auto only runs while Average is off (VB 556): the subtractor is the raw received
+  // minimum (uncapped, VB 560); the cap only applies to the value written back into the
+  // AdcMin box (VB 558). While averaging, the subtractor stays frozen at the box value.
+  let adcMin = s.AdcMin
+  if (s.AdcMinAuto && !s.AverageEnabled) {
+    adcMin = frame.valueMin
+    const boxValue = Math.min(Math.round(frame.valueMin), s.AdcMax - Math.floor(adcScale / 8))
+    if (boxValue !== s.AdcMin) setSettings({ AdcMin: boxValue })
+  }
 
   processFrame(
     pipeline,
@@ -278,16 +291,24 @@ export function doResetSpectrum(): void {
   notifyFrame()
 }
 
-// Load data file (§4.1): disconnect the camera, write data directly into spatialFiltered
+// Load data file (§4.1): disconnect the camera; file values land in `resampled`
+// (= Array_Calibrated) and the display stages run over them — the original re-runs
+// SpatialFilter/Background/Reference on every redraw of a loaded file, so the
+// Spatial avg. control keeps working (and re-saves smoothed data) in file mode
 export function loadDataIntoPipeline(nms: number[], values: number[]): void {
   void disconnectCamera()
   const n = values.length
   pipeline = createPipelineState(n)
-  pipeline.spatialFiltered.set(values)
+  pipeline.resampled.set(values)
   pipeline.nmMin = nms[0] ?? 0
-  pipeline.nmMax = nms[n - 1] ?? 1000
+  // NmMax is the maximum over all lines, not the last line (Spectrometer_SetSpectrumTextFromFile),
+  // so a non-ascending (hand-edited) file cannot produce a reversed axis
+  let nmMax = 0
+  for (const nm of nms) if (nm > nmMax) nmMax = nm
+  pipeline.nmMax = nmMax || 1000
   pipeline.reference = null
   pipeline.background = null
+  runFileDisplayStages()
   // Deliberately do NOT touch calibration state here: the file's nm axis lives
   // in pipeline.nmMin/nmMax only, matching the original program where loading a
   // data file never modifies the Calib arrays. Writing it via setCalibration
@@ -296,4 +317,22 @@ export function loadDataIntoPipeline(nms: number[], values: number[]): void {
   // calibration exactly this way (calibration-lost-on-refresh bug).
   setRuntime({ numSamples: n, referenceOn: false, backgroundOn: false })
   notifyFrame()
+}
+
+function runFileDisplayStages(): void {
+  const s = getState().settings
+  runDisplayStages(pipeline, {
+    spatialAveraging: s.SpatialAveraging,
+    backgroundEnabled: pipeline.background !== null,
+    referenceEnabled: pipeline.reference !== null,
+    startX: s.StartX,
+    endX: s.EndX,
+  })
+}
+
+// Re-run the display stages over loaded file data. The spectrum view calls this before each
+// draw while in file mode, mirroring Prepare_VisibleSamples running on every redraw.
+export function reprocessFileData(): void {
+  if (getState().runtime.fileMode === null) return
+  runFileDisplayStages()
 }

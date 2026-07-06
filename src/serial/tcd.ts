@@ -89,6 +89,9 @@ export class TcdSerial {
     this.running = true
     void this.readLoop()
     await this.sendOptions()
+    // OpenComm sends OPTIONS once right after opening and 10 more times (50 ms apart) at the
+    // end, so the firmware reliably latches the settings even if the first line was garbled
+    await this.sendOptions(10)
   }
 
   async disconnect(): Promise<void> {

@@ -89,10 +89,40 @@ export async function loadDataFile(): Promise<void> {
   await loadDataText(await f.text(), f.name)
 }
 
+// Info-window whitelist (Spectrometer_SetSpectrumTextFromFile): only these header keys are
+// shown; everything else (Peak Area, AdcMax/Min, Nanometers;Intensity, …) is deliberately hidden
+const WEBCAM_INFO_KEYS: Record<string, string> = {
+  'rec.samples': 'Rec.Samples',
+  framespersec: 'FramesPerSec',
+  exposure: 'Exposure',
+  gain: 'Gain',
+  brightness: 'Brightness',
+  contrast: 'Contrast',
+  gamma: 'Gamma',
+  average: 'Average',
+  'spatial avg.': 'Spatial avg.',
+}
+const TCD_INFO_KEYS: Record<string, string> = {
+  samples: 'Samples',
+  adcspeed: 'AdcSpeed',
+  exposure: 'Exposure',
+  average: 'Average',
+  'spatial avg.': 'Spatial avg.',
+  receivedsamples: 'Rec.Samples',
+  framespersec: 'FramesPerSec',
+}
+const COMMON_INFO_KEYS: Record<string, string> = {
+  risingspeed: 'RisingSpeed',
+  fallingspeed: 'FallingSpeed',
+  nanometersmax: 'NanometersMax',
+  nanometersmin: 'NanometersMin',
+}
+
 export async function loadDataText(text: string, filename: string): Promise<void> {
   const nms: number[] = []
   const values: number[] = []
   const meta: string[] = []
+  let sensorName = ''
   for (const raw of text.split(/\r?\n/)) {
     // Replace TAB and , with ; first, then collapse repeated whitespace (order must not be reversed, otherwise \s+ would consume the TABs first)
     const line = raw.trim().replace(/[\t,]/g, ';').replace(/\s+/g, ' ')
@@ -104,7 +134,15 @@ export async function loadDataText(text: string, filename: string): Promise<void
         nms.push(a)
         values.push(Number.parseFloat(parts[1]))
       } else {
-        meta.push(`${parts[0].padEnd(15)}${parts[1]}`)
+        const key = parts[0].toLowerCase()
+        if (key === 'sensor') {
+          sensorName = parts[1]
+          meta.push(`${'Sensor'.padEnd(15)}${parts[1]}`)
+        } else {
+          const table = sensorName.toLowerCase() === 'webcam' ? WEBCAM_INFO_KEYS : TCD_INFO_KEYS
+          const label = table[key] ?? COMMON_INFO_KEYS[key]
+          if (label) meta.push(`${label.padEnd(15)}${parts[1]}`)
+        }
       }
     }
   }

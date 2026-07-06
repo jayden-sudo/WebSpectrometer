@@ -3,21 +3,18 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { getState, markCalibrated, setCalibration, setRuntime, setSettings, useAppState } from '../app/store'
 import { useT } from '../i18n'
-import { pipeline, subscribeFrame } from '../app/engine'
+import { pipeline, reprocessFileData, subscribeFrame } from '../app/engine'
 import { extractVisible, updatePeakArea } from '../core/pipeline'
 import { valueToY, yToValue } from '../core/logScale'
 import { detectPeaks } from '../core/peaks'
 import { wavelengthToCss } from '../core/wavelengthColor'
 import { addPoint, clampBin, clampNm, nmToBin, removePoint } from '../core/calibration'
 
-interface LabelRect {
+// Peak label hit region (MouseOnLabels): |mx − x| < 20 and |my − y| < 30 against the peak
+// line x and the FINAL label y (the value label position when NmCoeff > 50)
+interface PeakLabelHit {
   x: number
   y: number
-  w: number
-  h: number
-}
-
-interface PeakLabelHit extends LabelRect {
   nm: number
   value: number
 }
@@ -141,21 +138,25 @@ export const SpectrumView = forwardRef<HTMLCanvasElement | null, Props>(function
     const s = settingsRef.current
     const st = getState()
 
+    // In file mode the display stages re-run before every draw (Prepare_VisibleSamples)
+    reprocessFileData()
+
     // Canvas background AliceBlue
     ctx.fillStyle = 'rgb(240,248,255)'
     ctx.fillRect(0, 0, W, H)
 
     const win = extractVisible(pipeline, s.StartX, s.EndX)
 
-    const destW = W - DEST_LEFT
+    const destW = W - 1 - DEST_LEFT // DestWidth = DestW − 1 − DestLeft
     const destH = H
     const n = pipeline.numSamples
     const nmMin = pipeline.nmMin
     const nmMax = pipeline.nmMax
     const nmAt = (idx: number) => nmMin + ((nmMax - nmMin) * idx) / n
     const nmStart = nmAt(win.start)
-    const nmEnd = nmAt(win.start + win.length)
-    const nmCoeff = destW / Math.max(nmEnd - nmStart, 0.001) // pixels per nm
+    // NmEnd anchors the LAST visible sample to the right plot edge (SrcX0+SrcDX−1, kx = w/(len−1))
+    const nmEnd = nmAt(win.start + win.length - 1)
+    const nmCoeff = nmEnd > nmStart ? destW / (nmEnd - nmStart) : 1 // pixels per nm (SetNmCoeff)
     const nmToX = (nm: number) => DEST_LEFT + (nm - nmStart) * nmCoeff
     const maxV = win.maxVisibleValue
     const vToY = (v: number) => valueToY(v, maxV, destH, s.LogScale)
@@ -218,40 +219,45 @@ export const SpectrumView = forwardRef<HTMLCanvasElement | null, Props>(function
       }
     }
 
-    // Peak/dip labels (§8.5)
+    // Peak/dip labels (§8.5), following MarkPeak
     viewRef.current = { nmStart, nmCoeff }
     peakLabelsRef.current = []
     if (s.Peaks || s.Dips) {
-      const peaks = detectPeaks(win.values, maxV, destW, s.Peaks, s.Dips)
+      // delta is computed against the FULL image width (MarkAllPeaks: (20·SrcDX)\DestW)
+      const peaks = detectPeaks(win.values, maxV, W, s.Peaks, s.Dips)
       ctx.font = '12px Arial'
       for (const p of peaks) {
         const nm = nmAt(win.start + p.index)
         const x = idxToX(p.index)
-        const y = vToY(p.value)
-        const label = nmCoeff > 50 ? nm.toFixed(2) : String(Math.round(nm))
-        const tw = ctx.measureText(label).width + 8
+        // The marker anchor stays linear even under Log scale (original quirk: MarkPeak's y1
+        // does not go through Y_From_Value, so it detaches from the log-drawn curve)
+        const y1 = 15 + Math.round((destH - 15) * (1 - p.value / maxV))
+        let y2: number
         if (!p.isDip) {
-          // Red vertical line: from just below the peak to the bottom
+          // Labels sit in a row near the bottom unless the peak is small (y2 < DestH−50 → DestH−20)
+          y2 = y1 - 20
+          if (y2 < destH - 50) y2 = destH - 20
           ctx.strokeStyle = 'red'
           ctx.beginPath()
-          ctx.moveTo(x + 0.5, y + 4)
+          ctx.moveTo(x + 0.5, y1 + 1)
           ctx.lineTo(x + 0.5, destH)
           ctx.stroke()
-          let ly = y - 20
-          if (ly < TOP_BAND + 2) ly = destH - 20
-          drawLabel(ctx, x - tw / 2, ly - 7, tw, 14, label, 'green')
-          peakLabelsRef.current.push({ x: x - tw / 2, y: ly - 7, w: tw, h: 14, nm, value: p.value })
-          if (nmCoeff > 50) {
-            drawLabel(ctx, x - tw / 2, ly + 9, tw, 14, String(Math.round(p.value)), 'green')
-          }
         } else {
+          y2 = 30
           ctx.strokeStyle = 'green'
           ctx.beginPath()
           ctx.moveTo(x + 0.5, 40)
-          ctx.lineTo(x + 0.5, y - 4)
+          ctx.lineTo(x + 0.5, y1 - 3)
           ctx.stroke()
-          drawLabel(ctx, x - tw / 2, 30 - 7, tw, 14, label, 'green')
         }
+        const label = nmCoeff > 50 ? nm.toFixed(2) : String(Math.round(nm))
+        drawPeakLabel(ctx, x, y2, label, false)
+        if (nmCoeff > 50) {
+          // Secondary value label: above the nm label when it is in the lower half, else below
+          y2 = y2 > destH / 2 ? y2 - 16 : y2 + 16
+          drawPeakLabel(ctx, x, y2, String(Math.round(p.value)), true)
+        }
+        peakLabelsRef.current.push({ x, y: y2, nm, value: p.value })
       }
     }
 
@@ -287,11 +293,16 @@ export const SpectrumView = forwardRef<HTMLCanvasElement | null, Props>(function
     // Measurement (§9): PeakArea smoothed via SmoothValue_Pow_Adaptive (speed=1)
     const pa = updatePeakArea(win, nmMin, nmMax, n)
     const m = mouseRef.current
-    if (m.inside && m.x > DEST_LEFT) {
+    if (m.inside) {
+      // PrintValueAndNanometers runs anywhere inside the picture box, including x < DestLeft
       const nm = nmStart + (m.x - DEST_LEFT) / nmCoeff
       onMeasure({ mode: 'value', value: yToValue(m.y, maxV, destH, s.LogScale), nm, peakArea: pa })
     } else {
-      onMeasure({ mode: 'max', value: win.maxPeakValue, nm: nmAt(win.maxPeakIndex), peakArea: pa })
+      // Original quirk preserved: Spectrometer_PrintMaxValueAndNanometers maps the bin through
+      // full-width pixels ((idx·DestW)\SrcDX) without adding DestLeft before X_To_Nanometers
+      const localIdx = win.maxPeakIndex - win.start
+      const nm = nmStart + (Math.trunc((localIdx * W) / win.length) - DEST_LEFT) / nmCoeff
+      onMeasure({ mode: 'max', value: win.maxPeakValue, nm, peakArea: pa })
     }
   }
 
@@ -303,21 +314,21 @@ export const SpectrumView = forwardRef<HTMLCanvasElement | null, Props>(function
       e.preventDefault()
       const s = settingsRef.current
       const rect = canvas.getBoundingClientRect()
-      const delta = (e.deltaY < 0 ? 1 : -1) * (e.ctrlKey ? 0.1 : 1)
-      // dx = (delta*EndX - StartX)/2000 → about 6% of the window per notch
-      const span = s.EndX - s.StartX
-      const dx = (delta * span * 120) / 2000
-      const k1 = Math.max(0, Math.min(1, (e.clientX - rect.left - DEST_LEFT) / (rect.width - DEST_LEFT)))
-      let start = s.StartX + dx * k1
-      let end = s.EndX - dx * (1 - k1)
-      start = Math.max(0, Math.min(995, start))
-      end = Math.max(start + 5, Math.min(1000, end))
-      setSettings({ StartX: Math.round(start), EndX: Math.round(end) })
+      // PBox_Spectrum_MouseWheel: the boxes are read as integers, dx = (Δ·EndX − StartX)/2000
+      // (original operator-precedence quirk: scales with the absolute EndX, not the span),
+      // Ctrl = ×0.1 fine zoom, guaranteed ±1‰ minimum step, k1 deliberately unclamped,
+      // fractional results written back; boxes clamp on write with a 20‰ minimum gap
+      const startX0 = Math.round(s.StartX)
+      const endX0 = Math.round(s.EndX)
+      let dx = ((e.deltaY < 0 ? 120 : -120) * endX0 - startX0) / 2000
+      if (e.ctrlKey) dx *= 0.1
+      if (Math.abs(dx) < 1) dx = Math.sign(dx)
+      const k1 = (e.clientX - rect.left - DEST_LEFT) / (rect.width - DEST_LEFT)
+      const start = Math.max(0, Math.min(endX0 - 20, startX0 + dx * k1))
+      const end = Math.max(startX0 + 20, Math.min(1000, endX0 - dx * (1 - k1)))
+      setSettings({ StartX: start, EndX: end })
     }
     let drag: { x: number; startX: number; endX: number } | null = null
-
-    const hitRect = (r: LabelRect, x: number, y: number, padX = 0, padY = 0) =>
-      x >= r.x - padX && x <= r.x + r.w + padX && y >= r.y - padY && y <= r.y + r.h + padY
 
     // Hit test (PBox_Spectrum_MouseDown): top band y<15 and |x - label x| < 20
     const hitTrimPoint = (mx: number, my: number): TrimLabelHit | undefined => {
@@ -350,17 +361,23 @@ export const SpectrumView = forwardRef<HTMLCanvasElement | null, Props>(function
         }
       }
 
-      // Click near a peak label (±20px, ±30px) → clipboard FIFO (§8.7)
-      const peak = peakLabelsRef.current.find((r) => hitRect(r, mx, my, 20, 30))
+      // Click near a peak label (±20px / ±30px around the line x and final label y) → clipboard FIFO (§8.7)
+      const peak = peakLabelsRef.current.find((r) => Math.abs(mx - r.x) < 20 && Math.abs(my - r.y) < 30)
       if (peak) {
-        const line = `${String(Math.round(peak.value)).padStart(5, '0')}  ${peak.nm.toFixed(2)} nm`
+        // MouseOnLabels: value "00000" + two spaces + nm "0.00" (no unit suffix), CRLF-terminated lines
+        const line = `${String(Math.round(peak.value)).padStart(5, '0')}  ${peak.nm.toFixed(2)}`
         const fifo = clipFifoRef.current
         if (fifo[fifo.length - 1] !== line) {
           fifo.push(line)
           while (fifo.length > 7) fifo.shift()
         }
-        void navigator.clipboard?.writeText(fifo.join('\n')).catch(() => undefined)
-        setClipBox({ x: mx + 12, y: my - 30 })
+        void navigator.clipboard?.writeText(fifo.join('\r\n') + '\r\n').catch(() => undefined)
+        // Floating box placement (MouseOnLabels tail): clamp x to the right edge, flip y by half height
+        const rect2 = canvas.getBoundingClientRect()
+        let bx = peak.x
+        if (bx + 80 > rect2.width) bx = rect2.width - 80
+        const by = peak.y > rect2.height / 2 ? peak.y - 130 : peak.y + 20
+        setClipBox({ x: bx - 14, y: by })
         return
       }
 
@@ -401,19 +418,16 @@ export const SpectrumView = forwardRef<HTMLCanvasElement | null, Props>(function
       }
 
       if (drag) {
-        const span = drag.endX - drag.startX
-        const dPix = e.clientX - drag.x
-        const dThousandths = Math.round((-dPix / (rect.width - DEST_LEFT)) * span)
-        let start = drag.startX + dThousandths
-        let end = drag.endX + dThousandths
-        if (start < 0) {
-          end -= start
-          start = 0
-        }
-        if (end > 1000) {
-          start -= end - 1000
-          end = 1000
-        }
+        // PBox_Spectrum_MouseMove pan: divisor is the FULL picture-box width and the
+        // values stay fractional (txt NumericValue keeps decimals)
+        const diff = drag.endX - drag.startX
+        const dx = ((e.clientX - drag.x) * diff) / rect.width
+        let start = drag.startX - dx
+        let end = drag.endX - dx
+        if (start < 0) start = 0
+        if (start + diff > 1000) start = 1000 - diff
+        if (end > 1000) end = 1000
+        if (end - diff < 0) end = diff
         setSettings({ StartX: start, EndX: end })
       }
     }
@@ -516,6 +530,30 @@ export const SpectrumView = forwardRef<HTMLCanvasElement | null, Props>(function
   )
 })
 
+// Peak/dip label (MarkPeak): yellow box with green border at fixed widths, left edge at x−14,
+// text left-aligned at x−13; widths step with the text length exactly like the original
+function drawPeakLabel(ctx: CanvasRenderingContext2D, x: number, y: number, text: string, isValue: boolean) {
+  let w = 26
+  if (isValue) {
+    if (text.length > 3) w = 34
+    if (text.length > 4) w = 41
+  } else {
+    if (text.length > 3) w = 30
+    if (text.length > 4) w = 37
+    if (text.length > 5) w = 44
+  }
+  ctx.fillStyle = 'yellow'
+  ctx.fillRect(x - 14, y, w, 14)
+  ctx.strokeStyle = 'green'
+  ctx.lineWidth = 1
+  ctx.strokeRect(x - 14 + 0.5, y + 0.5, w - 1, 13)
+  ctx.fillStyle = 'black'
+  ctx.textBaseline = 'middle'
+  ctx.textAlign = 'left'
+  ctx.fillText(text, x - 13, y + 8)
+  ctx.textBaseline = 'alphabetic'
+}
+
 // Yellow-background label (peak = green border, calibration = red border)
 function drawLabel(
   ctx: CanvasRenderingContext2D,
@@ -586,21 +624,24 @@ function drawGrid(
     }
   }
 
-  // Vertical axis: one line every 5%; 100%=Pen1, multiples of 10%=Pen2, others=Pen3; value label every 10%
+  // Vertical axis (scale Y): grid lines sit at UNIFORM pixel spacing — every 5%, 100%=Pen1,
+  // multiples of 10%=Pen2, others=Pen3 — and the label every 10% is Y_To_Value at that pixel,
+  // so under Log scale the lines stay evenly spaced and the labels become non-round values
   ctx.textAlign = 'right'
-  for (let p = 5; p <= 100; p += 5) {
-    const v = (p / 100) * maxV
-    const y = Math.round(valueToY(v, maxV, destH, logK)) + 0.5
+  for (let p = 0; p <= 100; p += 5) {
+    const y = Math.round(destH - (p / 100) * (destH - 15)) + 0.5
     ctx.strokeStyle = p === 100 ? pens[0] : p % 10 === 0 ? pens[1] : pens[2]
     ctx.beginPath()
     ctx.moveTo(DEST_LEFT, y)
     ctx.lineTo(W, y)
     ctx.stroke()
-    if (p % 10 === 0) {
-      ctx.fillStyle = 'black'
-      const label = v >= 100000 ? `${Math.round(v / 1000)}K` : String(Math.round(v))
-      ctx.fillText(label, 35, y + 4)
-    }
+  }
+  ctx.fillStyle = 'black'
+  for (let p = 10; p <= 100; p += 10) {
+    const y = destH - (p / 100) * (destH - 15)
+    const v = yToValue(y, maxV, destH, logK)
+    const label = v >= 100000 ? `${Math.round(v / 1000)}K` : String(Math.round(v))
+    ctx.fillText(label, 35, y + 4)
   }
   ctx.textAlign = 'left'
 }

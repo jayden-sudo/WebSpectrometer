@@ -144,26 +144,11 @@ function AboutDialog({ onClose }: { onClose: () => void }) {
         onClick={(e) => e.stopPropagation()}
       >
         <h3 style={{ marginBottom: 10 }}>Web Spectrometer</h3>
-        <p style={{ margin: '8px 0' }}>
-          A web-based Spectrometer app with a UI inspired by Theremino Spectrometer
-        </p>
-        <p style={{ margin: '8px 0' }}>Visible, UVA and Near Infrared Spectrometer</p>
+        <p style={{ margin: '8px 0' }}>Visible, UVA and near-infrared spectrometer running in your browser</p>
         <p style={{ margin: '8px 0', fontSize: 11, color: 'rgb(90,90,90)' }}>
-          An AI-assisted implementation by the author, created with reference to Theremino Spectrometer
-        </p>
-        <p style={{ margin: '8px 0', fontSize: 11 }}>
-          <a href="https://github.com/jayden-sudo/WebSpectrometer" target="_blank" rel="noreferrer">
-            github.com/jayden-sudo/WebSpectrometer
-          </a>
-          {' · '}
-          <a href="https://x.com/jayden_sudo" target="_blank" rel="noreferrer">
-            @jayden_sudo
-          </a>
-        </p>
-        <p style={{ margin: '8px 0', fontSize: 11, color: 'rgb(90,90,90)' }}>
-          Special thanks to{' '}
+          Inspired by Theremino Spectrometer — special thanks to{' '}
           <a href="https://www.theremino.com" target="_blank" rel="noreferrer">
-            www.theremino.com
+            theremino.com
           </a>{' '}
           and{' '}
           <a
@@ -172,10 +157,34 @@ function AboutDialog({ onClose }: { onClose: () => void }) {
             rel="noreferrer"
           >
             Stefano Marchetti
-          </a>{' '}
-          for their outstanding work
+          </a>
+          <br />
+          An AI-assisted implementation by the author
         </p>
-        <p style={{ margin: '8px 0' }}>License: GNU GPL — <a href="https://github.com/jayden-sudo/WebSpectrometer" target="_blank" rel="noreferrer">GitHub</a></p>
+        <p style={{ margin: '8px 0', fontSize: 11 }}>
+          <a href="https://github.com/jayden-sudo/WebSpectrometer" target="_blank" rel="noreferrer">
+            GitHub
+          </a>
+          {' · '}
+          <a href="https://x.com/jayden_sudo" target="_blank" rel="noreferrer">
+            @jayden_sudo
+          </a>
+          {' · GNU GPL'}
+        </p>
+        {__COMMIT_SHA__ && (
+          <p style={{ margin: '8px 0', fontSize: 11, color: 'rgb(90,90,90)' }}>
+            Build:{' '}
+            <a
+              href={`https://github.com/jayden-sudo/WebSpectrometer/commit/${__COMMIT_SHA__}`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontFamily: 'monospace' }}
+            >
+              {__COMMIT_SHA__.slice(0, 7)}
+            </a>
+            {` (${__BUILD_DATE__})`}
+          </p>
+        )}
         <button type="button" className="toggle-btn" style={{ marginTop: 12, minWidth: 80 }} onClick={onClose}>
           OK
         </button>

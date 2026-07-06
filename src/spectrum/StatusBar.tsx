@@ -31,6 +31,8 @@ export function StatusBar({ measure }: { measure: SpectrumMeasure | null }) {
         value={settings.LogScale}
         min={-10}
         max={10}
+        step={0.2}
+        decimals={1}
         defaultValue={0}
         highlight={settings.LogScale !== 0}
         onChange={(v) => setSettings({ LogScale: v })}

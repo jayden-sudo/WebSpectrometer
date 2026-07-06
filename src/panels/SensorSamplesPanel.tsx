@@ -90,12 +90,16 @@ function WebcamSamplesPanel() {
           StartY: Math.max(0, Math.min(1000, s.StartY + Math.round(d * cursorRatio))),
         })
       } else {
+        // PBox_Samples_MouseWheel: dx = (Δ·EndX − StartX)/2000 (original operator-precedence
+        // quirk, Δ=±120) with a guaranteed ±1‰ minimum step; boxes clamp on write with a
+        // 20‰ minimum gap (Params_Changed sets StartX.Max=EndX−20, EndX.Min=StartX+20)
+        const startX0 = Math.round(s.StartX)
+        const endX0 = Math.round(s.EndX)
+        let dx = ((e.deltaY < 0 ? 120 : -120) * endX0 - startX0) / 2000
+        if (Math.abs(dx) < 1) dx = Math.sign(dx)
         const k1 = (e.clientX - rect.left) / rect.width
-        const dx = delta
-        // Same anti-inversion guard as SpectrumView: start ≤ 995 and end ≥ start+5
-        let start = Math.max(0, Math.min(995, s.StartX + Math.round(dx * k1)))
-        let end = Math.min(1000, s.EndX - Math.round(dx * (1 - k1)))
-        end = Math.max(start + 5, end)
+        const start = Math.max(0, Math.min(endX0 - 20, startX0 + dx * k1))
+        const end = Math.max(startX0 + 20, Math.min(1000, endX0 - dx * (1 - k1)))
         setSettings({ StartX: start, EndX: end })
       }
     }
@@ -115,9 +119,24 @@ function WebcamSamplesPanel() {
       </div>
       <div className="field-row" style={{ marginTop: 6 }}>
         <span className="field-label">Size Y</span>
-        <NumericBox value={settings.SizeY} min={2} max={1000} onChange={(v) => setSettings({ SizeY: v })} />
+        <NumericBox
+          value={settings.SizeY}
+          min={10}
+          max={1000}
+          onChange={(v) => {
+            // Params_Changed: changing SizeY recenters the band (StartY −= Δ·0.5)
+            const dy = v - settings.SizeY
+            const startY = Math.max(0, Math.min(1000 - v, settings.StartY - dy * 0.5))
+            setSettings({ SizeY: v, StartY: startY })
+          }}
+        />
         <span className="field-label">Start Y</span>
-        <NumericBox value={settings.StartY} min={0} max={1000} onChange={(v) => setSettings({ StartY: v })} />
+        <NumericBox
+          value={settings.StartY}
+          min={0}
+          max={1000 - settings.SizeY} // StartY.Max = 1000 − SizeY (Params_Changed)
+          onChange={(v) => setSettings({ StartY: v })}
+        />
         <label style={{ marginLeft: 8 }}>
           <input
             type="checkbox"
@@ -129,9 +148,19 @@ function WebcamSamplesPanel() {
       </div>
       <div className="field-row">
         <span className="field-label">{t('Label_StartX')}</span>
-        <NumericBox value={settings.StartX} min={0} max={1000} onChange={(v) => setSettings({ StartX: v })} />
+        <NumericBox
+          value={settings.StartX}
+          min={0}
+          max={settings.EndX - 20} // 20‰ minimum window (Params_Changed)
+          onChange={(v) => setSettings({ StartX: v })}
+        />
         <span className="field-label">{t('Label_EndX')}</span>
-        <NumericBox value={settings.EndX} min={0} max={1000} onChange={(v) => setSettings({ EndX: v })} />
+        <NumericBox
+          value={settings.EndX}
+          min={settings.StartX + 20}
+          max={1000}
+          onChange={(v) => setSettings({ EndX: v })}
+        />
       </div>
     </div>
   )
@@ -177,10 +206,12 @@ function TcdSamplesPanel() {
       ctx.fillRect(SCALE_BORDER, 0, plotW, H)
 
       // Gray bands: above AdcMax and below AdcMin (clipping regions)
+      // The original divides by a fixed 1000 here — not AdcScale — even though the sample
+      // dots use /AdcScale (Spectrometer_ShowReceivedSamples); quirk preserved
       ctx.fillStyle = 'rgb(210,210,210)'
-      const yMax = (H * (adcScale - s.AdcMax)) / adcScale
+      const yMax = (H * (adcScale - s.AdcMax)) / 1000
       ctx.fillRect(SCALE_BORDER, 0, plotW, Math.max(0, yMax))
-      const yMin = (H * s.AdcMin) / adcScale
+      const yMin = (H * s.AdcMin) / 1000
       ctx.fillRect(SCALE_BORDER, H - Math.max(0, yMin), plotW, Math.max(0, yMin))
 
       // Grid
@@ -238,8 +269,8 @@ function TcdSamplesPanel() {
         <span className="field-label">{t('Label_AdcMax')}</span>
         <NumericBox
           value={settings.AdcMax}
-          min={1}
-          max={65536}
+          min={0}
+          max={65535}
           width={52}
           onChange={(v) => setSettings({ AdcMax: v })}
         />

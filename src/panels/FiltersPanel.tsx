@@ -44,6 +44,8 @@ export function FiltersPanel() {
           value={settings.SpatialAveraging}
           min={0}
           max={10}
+          step={0.2}
+          decimals={1}
           defaultValue={0}
           highlight={settings.SpatialAveraging > 0}
           onChange={(v) => setSettings({ SpatialAveraging: v })}
@@ -56,8 +58,10 @@ export function FiltersPanel() {
         <div style={{ flex: 1 }} />
         <NumericBox
           value={settings.RisingSpeed}
-          min={0}
+          min={1} // original forbids 0 for rising only (0 would freeze the display forever)
           max={100}
+          step={0.2}
+          decimals={1}
           defaultValue={100}
           highlight={settings.RisingSpeed < 100}
           onChange={(v) => setSettings({ RisingSpeed: v })}
@@ -72,6 +76,8 @@ export function FiltersPanel() {
           value={settings.FallingSpeed}
           min={0}
           max={100}
+          step={0.2}
+          decimals={1}
           defaultValue={100}
           highlight={settings.FallingSpeed < 100}
           onChange={(v) => setSettings({ FallingSpeed: v })}

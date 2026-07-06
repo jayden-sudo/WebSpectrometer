@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { LANGUAGES, translate, type LangCode } from '../i18n'
 import { setSettings, useAppState } from '../app/store'
 import { loadCalibrationFile, loadDataFile, saveCalibrationAs, loadIrradianceFile } from '../core/files'
-import { applyTrimPreset, disconnectCamera } from '../app/engine'
+import { applyTrimPreset, connectCamera, disconnectCamera } from '../app/engine'
 
 interface MenuDef {
   key: string
@@ -145,8 +145,12 @@ function SubMenu({ label, children }: { label: string; children: ReactNode }) {
 }
 
 
-// Switch sensor type (§3.3): disconnect first, then swap panels
+// Switch sensor type (§3.3): disconnect, swap panels, then immediately open the new
+// sensor (InitSensorType calls OpenWebCam/OpenComm right after switching); the menu click
+// is a user gesture, so getUserMedia/requestPort are allowed here
 function switchSensor(type: 'WebCam' | 'TCD1304' | 'TCD1254') {
-  void disconnectCamera()
-  setSettings({ SensorType: type, Connected: false })
+  void disconnectCamera().then(() => {
+    setSettings({ SensorType: type, Connected: false })
+    return connectCamera()
+  }).catch(() => undefined) // user cancelled the device picker → stay disconnected
 }

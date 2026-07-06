@@ -20,6 +20,7 @@ const CONTROL_ORDER: { key: string; label: string; autoKey?: string }[] = [
   { key: 'pan', label: 'Pan' },
   { key: 'tilt', label: 'Tilt' },
   { key: 'sharpness', label: 'Sharpness' },
+  { key: 'focusDistance', label: 'Focus', autoKey: 'focusMode' }, // VB Focus slider + Auto
 ]
 
 interface CapRange {

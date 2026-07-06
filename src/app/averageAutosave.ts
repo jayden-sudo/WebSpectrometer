@@ -48,8 +48,14 @@ export function initAverageAutosave(): () => void {
     saveDataFile()
     writeLastSpectrum()
     if (!getState().settings.Repeat) {
-      void disconnectCamera()
-      setSettings({ AverageEnabled: false, Connected: false })
+      // CloseComm only closes the serial port: with a webcam the video keeps streaming and
+      // Connected stays true (Save_INI writes Connected = WebCamIsWorking); only averaging stops
+      if (getState().settings.SensorType === 'WebCam') {
+        setSettings({ AverageEnabled: false })
+      } else {
+        void disconnectCamera()
+        setSettings({ AverageEnabled: false, Connected: false })
+      }
     }
   })
   const onUnload = () => writeLastSpectrum()

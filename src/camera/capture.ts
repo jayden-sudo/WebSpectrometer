@@ -105,11 +105,16 @@ export class CameraCapture {
       this.onFps(dt > 0 ? 1000 / dt : 0)
     }
 
-    // ② ROI: SrcDY = H×SizeY÷1000; SrcY0 = H − H×StartY÷1000 − SrcDY (Y measured from the bottom)
-    let srcDY = Math.max(1, Math.round((h * this.roi.sizeY) / 1000))
-    let srcY0 = Math.round(h - (h * this.roi.startY) / 1000 - srcDY)
-    if (srcY0 < 0) srcY0 = 0
+    // ② ROI: SrcDY = H×SizeY\1000; SrcY0 = H − H×StartY\1000 − SrcDY (Y measured from the bottom;
+    // truncating integer division and clamp order per ProcessCapturedImage AREA Y)
+    let srcDY = Math.trunc((h * this.roi.sizeY) / 1000)
+    let srcY0 = h - Math.trunc((h * this.roi.startY) / 1000) - srcDY
     if (srcY0 + srcDY > h) srcDY = h - srcY0
+    if (srcDY <= 0) {
+      srcY0 += srcDY - 1
+      srcDY = 1
+    }
+    if (srcY0 < 0) srcY0 = 0
 
     // Rasterize only the ROI strip (canvas size = w × srcDY), avoiding drawing the whole frame just to read back a small strip
     if (this.canvas.width !== w || this.canvas.height !== srcDY) {

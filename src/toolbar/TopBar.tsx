@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ToggleButton } from '../components/ToggleButton'
 import { SAVE_TIME_OPTIONS } from '../core/settings'
-import { setSettings, useAppState } from '../app/store'
+import { getState, setSettings, useAppState } from '../app/store'
 import { useT } from '../i18n'
 import { saveDataFile, saveCanvasImage, saveTotalImage } from '../core/files'
 import { subscribeFrame } from '../app/engine'
@@ -40,6 +40,12 @@ export function TopBar({ spectrumCanvas }: { spectrumCanvas: () => HTMLCanvasEle
     deadlineRef.current = performance.now() + secs * 1000
     setRemaining(secs)
     const timer = setInterval(() => {
+      // Autosave_UpdateFromTimer bails while no device is connected: the countdown pauses
+      // instead of saving a frozen buffer
+      if (!getState().runtime.connected) {
+        deadlineRef.current += 250
+        return
+      }
       const left = (deadlineRef.current - performance.now()) / 1000
       if (left <= 0) {
         saveDataFile()
@@ -74,6 +80,12 @@ export function TopBar({ spectrumCanvas }: { spectrumCanvas: () => HTMLCanvasEle
   const onSaveDataToggle = () => {
     if (saveState !== 'idle') {
       setSaveState('idle')
+      return
+    }
+    // Tools_SaveDataFile_CheckedChanged: while disconnected (e.g. a loaded data file),
+    // save the current buffer immediately once instead of arming the autosave machine
+    if (!getState().runtime.connected) {
+      saveDataFile()
       return
     }
     const secs = SAVE_TIME_OPTIONS[settings.SaveTime]?.seconds ?? 0

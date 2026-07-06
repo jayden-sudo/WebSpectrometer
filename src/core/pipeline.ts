@@ -172,16 +172,30 @@ export function processFrame(
     resampled[i] = iir[binLut[i]]
   }
 
+  runDisplayStages(state, params)
+}
+
+// ⑨⑩⑪ Display stages, recomputed from `resampled` on every pass — in the original these run
+// inside Prepare_VisibleSamples on every redraw, including for loaded data files, so they are
+// exported separately: the engine re-runs them in file mode when Spatial avg./Reference/Background change
+export function runDisplayStages(
+  state: PipelineState,
+  params: Pick<PipelineParams, 'spatialAveraging' | 'backgroundEnabled' | 'referenceEnabled' | 'startX' | 'endX'>,
+): void {
+  const n = state.numSamples
+  const resampled = state.resampled
+
   // ⑨ Spatial filtering: bidirectional two-pass IIR, KFilter = 0.1 + 0.9×(10−F)/10
   const out = state.spatialFiltered
   if (params.spatialAveraging > 0) {
     const kf = 0.1 + (0.9 * (10 - params.spatialAveraging)) / 10
-    let acc = resampled[0]
+    // VB's local `v` starts at 0 for the forward pass and is carried over (not reseeded)
+    // into the backward pass (Add_SpatialFilter)
+    let acc = 0
     for (let i = 0; i < n; i++) {
       acc += (resampled[i] - acc) * kf
       out[i] = acc / 2
     }
-    acc = resampled[n - 1]
     for (let i = n - 1; i >= 0; i--) {
       acc += (resampled[i] - acc) * kf
       out[i] += acc / 2
@@ -200,8 +214,7 @@ export function processFrame(
   // After write-back, spatialFiltered is the data source for saving, consistent with the original program (§8.8)
   if (params.referenceEnabled && state.reference) {
     const ref = state.reference
-    const x0 = Math.max(0, Math.min(n - 1, Math.floor((n * (params.startX ?? 0)) / 1000)))
-    const len = Math.min(Math.max(1, n - x0 + Math.floor((n * ((params.endX ?? 1000) - 1000)) / 1000)), n - x0)
+    const { x0, len } = visibleWindowBounds(n, params.startX ?? 0, params.endX ?? 1000)
     let maxRef = 0.1
     for (let i = 0; i < len; i++) {
       const v = out[x0 + i]
@@ -213,6 +226,20 @@ export function processFrame(
       out[i] = v
     }
   }
+}
+
+// Visible window bounds (ProcessCapturedImage AREA X): VB `\` truncates toward zero — NOT floor —
+// so the (EndX−1000) term loses its fraction toward zero, and the degenerate case shifts x0 left
+export function visibleWindowBounds(n: number, startX: number, endX: number): { x0: number; len: number } {
+  let x0 = Math.trunc((n * startX) / 1000)
+  let dx = n - x0 + Math.trunc((n * (endX - 1000)) / 1000)
+  if (x0 + dx > n) dx = n - x0
+  if (dx <= 0) {
+    x0 += dx - 1
+    dx = 1
+  }
+  if (x0 < 0) x0 = 0
+  return { x0, len: Math.min(dx, n - x0) }
 }
 
 // Reference snapshot: values <200 → 99999 (discard weak-signal regions)
@@ -253,9 +280,7 @@ export function extractVisible(
   endX: number,
 ): VisibleWindow {
   const n = state.numSamples
-  const x0 = Math.max(0, Math.min(n - 1, Math.floor((n * startX) / 1000)))
-  const dx = Math.max(1, n - x0 + Math.floor((n * (endX - 1000)) / 1000))
-  const len = Math.min(dx, n - x0)
+  const { x0, len } = visibleWindowBounds(n, startX, endX)
 
   // Reference/Background were already written back into spatialFiltered in processFrame; here we only extract (reusing the scratch buffer)
   const src = state.spatialFiltered
@@ -263,7 +288,8 @@ export function extractVisible(
   const values = state.visibleScratch.subarray(0, len)
   for (let i = 0; i < len; i++) values[i] = src[x0 + i]
 
-  let maxV = 0
+  // VB floors MaxPeakValue at 0.1 and never assigns an index for values ≤ 0.1 (Prepare_VisibleSamples)
+  let maxV = 0.1
   let maxI = 0
   for (let i = 0; i < len; i++) {
     if (values[i] > maxV) {

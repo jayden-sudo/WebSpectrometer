@@ -26,6 +26,7 @@ export function yToValue(y: number, maxVisibleValue: number, destH: number, k: n
   if (e !== 1) {
     yy = destH - Math.pow((destH - y) / h, 1 / e) * h
   }
-  const p = ((h - (yy - 15)) * 100) / h
+  let p = ((h - (yy - 15)) * 100) / h
+  if (p > 100) p = 100
   return (p * maxVisibleValue) / 100
 }
