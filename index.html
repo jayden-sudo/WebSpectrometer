@@ -4,35 +4,35 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Web Spectrometer — Free Browser-Based DIY Spectrometer Software</title>
+    <title>Spectrometer — Free Browser-Based DIY Spectrometer Software</title>
     <meta
       name="description"
-      content="Free, open-source spectrometer software that runs in your browser. Turn a webcam and a diffraction grating into a real spectrometer: live spectrum analysis, wavelength calibration with fluorescent lamps, peak detection, and CSV export. Works on Linux, macOS and Windows with Chrome."
+      content="Free, open-source spectrometer software that runs in your browser. Turn a webcam and a diffraction grating into a real spectrometer: live spectrum analysis, wavelength calibration with fluorescent lamps, peak detection, and CSV export. All processing happens locally in your browser — no data is uploaded. Works on Linux, macOS and Windows with any Chromium-based browser (Chrome, Edge, Opera…)."
     />
     <meta
       name="keywords"
       content="spectrometer, DIY spectrometer, web spectrometer, spectroscopy, webcam spectrometer, diffraction grating, spectrum analysis, wavelength calibration, emission spectrum, open source, Theremino alternative"
     />
-    <meta name="author" content="Web Spectrometer contributors" />
+    <meta name="author" content="Spectrometer contributors" />
     <link rel="canonical" href="https://spectrometer-web.vercel.app/" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Web Spectrometer" />
-    <meta property="og:title" content="Web Spectrometer — Free Browser-Based DIY Spectrometer Software" />
+    <meta property="og:site_name" content="Spectrometer" />
+    <meta property="og:title" content="Spectrometer — Free Browser-Based DIY Spectrometer Software" />
     <meta
       property="og:description"
-      content="Turn a webcam and a diffraction grating into a real spectrometer, right in your browser. Live spectrum analysis, wavelength calibration, peak detection, CSV export. Free and open source."
+      content="Turn a webcam and a diffraction grating into a real spectrometer, right in your browser. Live spectrum analysis, wavelength calibration, peak detection, CSV export. Free, open source, and 100% local — no data leaves your browser."
     />
     <meta property="og:url" content="https://spectrometer-web.vercel.app/" />
     <meta property="og:image" content="https://spectrometer-web.vercel.app/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Web Spectrometer showing a calibrated fluorescent lamp emission spectrum with labeled mercury peaks" />
+    <meta property="og:image:alt" content="Spectrometer showing a calibrated fluorescent lamp emission spectrum with labeled mercury peaks" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Web Spectrometer — Free Browser-Based DIY Spectrometer Software" />
+    <meta name="twitter:title" content="Spectrometer — Free Browser-Based DIY Spectrometer Software" />
     <meta
       name="twitter:description"
       content="Turn a webcam and a diffraction grating into a real spectrometer, right in your browser. Free and open source."
@@ -53,7 +53,7 @@
         "@type": "WebApplication",
         "name": "Web Spectrometer",
         "url": "https://spectrometer-web.vercel.app/",
-        "description": "Free, open-source spectrometer software that runs in the browser. It converts the spectral image captured by a webcam (or a TCD1304/TCD1254 linear sensor over Web Serial) into a live spectrum curve, with multi-point wavelength calibration, peak/dip detection, filtering, irradiance correction and CSV/TXT export compatible with Theremino Spectrometer files. This is an AI-assisted implementation created by Jayden with reference to Theremino Spectrometer.",
+        "description": "Free, open-source spectrometer software that runs in the browser. It converts the spectral image captured by a webcam (or a TCD1304/TCD1254 linear sensor over Web Serial) into a live spectrum curve, with multi-point wavelength calibration, peak/dip detection, filtering, irradiance correction and CSV/TXT export compatible with Theremino Spectrometer files. All image processing happens locally in the browser; no video or spectrum data is ever uploaded. This is an AI-assisted implementation created by Jayden with reference to Theremino Spectrometer.",
         "author": {
           "@type": "Person",
           "name": "Jayden",
@@ -63,8 +63,8 @@
         "sameAs": ["https://github.com/jayden-sudo/WebSpectrometer"],
         "isBasedOn": "https://www.theremino.com/en/downloads/automation#spectrometer",
         "applicationCategory": "UtilitiesApplication",
-        "operatingSystem": "Any (requires Google Chrome)",
-        "browserRequirements": "Requires the latest Google Chrome; camera access requires HTTPS",
+        "operatingSystem": "Any (requires a Chromium-based browser)",
+        "browserRequirements": "Requires a Chromium-based browser (Chrome, Edge, Opera, Brave…); Firefox and Safari are not supported (no Web Serial). Camera access requires HTTPS",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
         "license": "https://www.gnu.org/licenses/gpl-3.0.html",
         "screenshot": "https://spectrometer-web.vercel.app/og-image.png",
@@ -78,7 +78,8 @@
           "Irradiance coefficient correction",
           "CSV/TXT data export compatible with Theremino Spectrometer",
           "TCD1304/TCD1254 linear sensor support via Web Serial",
-          "6-language interface"
+          "6-language interface",
+          "100% local processing — no data is uploaded"
         ]
       }
     </script>
@@ -154,9 +155,13 @@
             <li>Automatic peak/dip detection, CSV/TXT export compatible with Theremino Spectrometer</li>
             <li>TCD1304/TCD1254 linear CCD sensors supported via Web Serial</li>
           </ul>
+          <p style="margin: 0 0 14px; line-height: 1.55; font-weight: bold">
+            🔒 Your privacy: all image processing happens locally in your browser — no data is ever uploaded.
+          </p>
           <p style="margin: 0 0 18px; font-size: 12px; color: rgb(110, 100, 70); line-height: 1.5">
-            Requires the latest Google Chrome · Works on Linux, macOS and Windows · GNU GPL v3.
-            An AI-assisted implementation by Jayden, created with reference to Theremino Spectrometer.
+            Runs in Chromium-based browsers (Chrome, Edge, Opera…); Firefox and Safari are not supported (no Web
+            Serial) · Works on Linux, macOS and Windows · GNU GPL v3. An AI-assisted implementation by Jayden,
+            created with reference to Theremino Spectrometer.
           </p>
           <p style="margin: 0; font-size: 12px; border-top: 1px solid rgb(220, 205, 160); padding-top: 12px">
             <span style="color: rgb(110, 100, 70)">Loading the application…</span>

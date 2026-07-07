@@ -4,7 +4,9 @@
 
 Une application de spectromètre DIY — un fork de [Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer) V5.0 qui fonctionne dans le navigateur.
 
-**▶ Essayez-le maintenant : [spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)** — aucune installation, ouvrez-le simplement dans Chrome.
+**▶ Essayez-le maintenant : [spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)** — aucune installation, ouvrez-le simplement dans un navigateur basé sur Chromium (Chrome, Edge, Opera…).
+
+🔒 **Confidentialité** : tout le traitement d'image s'effectue localement dans votre navigateur — aucune donnée n'est jamais envoyée.
 
 ![Spectre d'émission d'une lampe fluorescente](images/screenshot1.png)
 
@@ -26,7 +28,7 @@ Il convertit en temps réel l'image spectrale capturée par une webcam (ou un ca
 - Calibration en longueur d'onde : calibration multipoint (Trim points) sur les raies du mercure à 436/546 nm d'une lampe fluorescente
 - Enregistrement de données : sauvegarde des spectres en CSV/TXT (fichiers compatibles avec Theremino Spectrometer pour Windows), sauvegarde automatique programmée/répétée, export d'images
 
-Fonctionnalités principales : pipeline de filtrage en temps réel (moyenne, vitesse de montée/descente, moyenne spatiale, référence/fond), détection des pics et des creux avec étiquettes, coloration par longueur d'onde, échelle logarithmique, correction d'irradiance et interface en 6 langues. Seule la dernière version de Chrome est requise.
+Fonctionnalités principales : pipeline de filtrage en temps réel (moyenne, vitesse de montée/descente, moyenne spatiale, référence/fond), détection des pics et des creux avec étiquettes, coloration par longueur d'onde, échelle logarithmique, correction d'irradiance et interface en 6 langues. Fonctionne dans tout navigateur basé sur Chromium (Chrome, Edge, Opera…) ; Firefox et Safari ne sont pas pris en charge car ils ne disposent pas du Web Serial.
 
 ## Démarrage rapide
 

@@ -4,7 +4,9 @@
 
 一款 DIY 光譜儀軟體——[Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer) V5.0 的 fork 版本,可直接在瀏覽器中運作。
 
-**▶ 線上使用:[spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)**——無需安裝,用 Chrome 開啟即可。
+**▶ 線上使用:[spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)**——無需安裝,用 Chromium 系瀏覽器(Chrome、Edge、Opera 等)開啟即可。
+
+🔒 **隱私**:所有影像處理都在你的瀏覽器本地完成——不會上傳任何資料。
 
 ![螢光燈發射光譜](images/screenshot1.png)
 
@@ -26,7 +28,7 @@
 - 光譜校準:多點校準(Trim points),用螢光燈 436/546nm 汞線標定波長軸
 - 資料記錄:光譜資料儲存為 CSV/TXT(與 Windows 版 Theremino Spectrometer 檔案互通)、定時/重複自動儲存、圖片匯出
 
-主要功能:即時濾波管線(平均、上升/下降速度、空間平均、參考/背景)、峰谷偵測標註、波長著色、對數座標、輻照係數修正、六種介面語言。僅需最新版 Chrome。
+主要功能:即時濾波管線(平均、上升/下降速度、空間平均、參考/背景)、峰谷偵測標註、波長著色、對數座標、輻照係數修正、六種介面語言。可在任何 Chromium 系瀏覽器(Chrome、Edge、Opera 等)中運作;Firefox 與 Safari 因缺少 Web Serial 支援而無法使用。
 
 ## 快速開始
 

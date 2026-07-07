@@ -4,7 +4,9 @@
 
 一款 DIY 光谱仪软件——[Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer) V5.0 的 fork 版本,可直接在浏览器中运行。
 
-**▶ 在线使用:[spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)**——无需安装,用 Chrome 打开即可。
+**▶ 在线使用:[spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)**——无需安装,用 Chromium 系浏览器(Chrome、Edge、Opera 等)打开即可。
+
+🔒 **隐私**:所有图像处理都在你的浏览器本地完成——不会上传任何数据。
 
 ![荧光灯发射光谱](images/screenshot1.png)
 
@@ -26,7 +28,7 @@
 - 光谱校准:多点校准(Trim points),用荧光灯 436/546nm 汞线标定波长轴
 - 数据记录:光谱数据保存为 CSV/TXT(与 Windows 版 Theremino Spectrometer 文件互通)、定时/重复自动保存、图片导出
 
-主要功能:实时滤波管线(平均、上升/下降速度、空间平均、参考/背景)、峰谷检测标注、波长着色、对数坐标、辐照系数修正、六种界面语言。仅需最新版 Chrome。
+主要功能:实时滤波管线(平均、上升/下降速度、空间平均、参考/背景)、峰谷检测标注、波长着色、对数坐标、辐照系数修正、六种界面语言。可在任何 Chromium 系浏览器(Chrome、Edge、Opera 等)中运行;Firefox 与 Safari 因缺少 Web Serial 支持而无法使用。
 
 ## 快速开始
 

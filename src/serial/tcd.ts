@@ -74,7 +74,8 @@ export class TcdSerial {
   }
 
   async connect(): Promise<void> {
-    if (!('serial' in navigator)) throw new Error('Web Serial API not available (Chrome required)')
+    if (!('serial' in navigator))
+      throw new Error('Web Serial API not available (use a Chromium-based browser such as Chrome, Edge or Opera)')
     await this.disconnect()
     const gen = ++this.generation
     const port = await navigator.serial.requestPort()

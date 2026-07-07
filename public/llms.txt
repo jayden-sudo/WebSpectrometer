@@ -4,7 +4,7 @@
 
 ## What it is
 
-Web Spectrometer turns a webcam plus a diffraction grating into a working optical spectrometer. It is an independent web implementation whose UI and features are inspired by Theremino Spectrometer (Windows-only); this project brings the same workflow to Linux, macOS and Windows via Google Chrome. License: GNU GPL v3.
+Web Spectrometer turns a webcam plus a diffraction grating into a working optical spectrometer. It is an independent web implementation whose UI and features are inspired by Theremino Spectrometer (Windows-only); this project brings the same workflow to Linux, macOS and Windows via any Chromium-based browser (Chrome, Edge, Opera, Brave…). Firefox and Safari are not supported (no Web Serial). All image processing happens locally in the browser; no video or spectrum data is uploaded. License: GNU GPL v3.
 
 ## Key capabilities
 
@@ -19,7 +19,7 @@ Web Spectrometer turns a webcam plus a diffraction grating into a working optica
 
 ## How to use (typical flow)
 
-1. Open the site in the latest Google Chrome (camera requires HTTPS).
+1. Open the site in a Chromium-based browser such as Chrome, Edge or Opera (camera requires HTTPS; Firefox/Safari are not supported).
 2. Connect the webcam of the DIY spectrometer (webcam + diffraction grating + slit).
 3. Calibrate once: Tools → Trim points → Fluorescent 436 546, then drag the 436/546 labels onto the mercury lines of a fluorescent lamp.
 4. Analyze any light source; save data files or images as needed.

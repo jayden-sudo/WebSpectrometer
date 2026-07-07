@@ -4,7 +4,9 @@
 
 A DIY spectrometer application — a fork of [Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer) V5.0 that runs in your browser.
 
-**▶ Try it now: [spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)** — no installation, just open it in Chrome.
+**▶ Try it now: [spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)** — no installation, just open it in a Chromium-based browser (Chrome, Edge, Opera…).
+
+🔒 **Privacy**: all image processing happens locally in your browser — no data is ever uploaded.
 
 ![Fluorescent lamp emission spectrum](docs/images/screenshot1.png)
 
@@ -26,7 +28,7 @@ It converts the spectral image captured by a webcam (or a TCD1304/TCD1254 linear
 - Wavelength calibration: multi-point calibration (Trim points) against the 436/546 nm mercury lines of a fluorescent lamp
 - Data logging: save spectra as CSV/TXT (file-compatible with the Windows Theremino Spectrometer), timed/repeated auto-save, image export
 
-Main features: real-time filtering pipeline (averaging, rising/falling speed, spatial averaging, reference/background), peak/dip detection with labels, wavelength coloring, logarithmic scale, irradiance correction, and a 6-language UI. Only the latest Chrome is required.
+Main features: real-time filtering pipeline (averaging, rising/falling speed, spatial averaging, reference/background), peak/dip detection with labels, wavelength coloring, logarithmic scale, irradiance correction, and a 6-language UI. Runs in any Chromium-based browser (Chrome, Edge, Opera…); Firefox and Safari are not supported because they lack Web Serial.
 
 ## Quick start
 

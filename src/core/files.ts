@@ -151,7 +151,7 @@ export async function loadDataText(text: string, filename: string): Promise<void
   // LastSpectrum files do not show metadata (§10 step 3)
   const isLast = filename.startsWith('LastSpectrum')
   setRuntime({ fileMode: filename, fileMeta: isLast ? [] : meta })
-  if (!isLast) document.title = `Web Spectrometer - ${filename}`
+  if (!isLast) document.title = `Spectrometer - ${filename}`
 }
 
 // ---------- Calibration file (§12.3) ----------
