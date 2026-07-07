@@ -4,6 +4,28 @@ import { LANGUAGES, translate, type LangCode } from '../i18n'
 import { setSettings, useAppState } from '../app/store'
 import { loadCalibrationFile, loadDataFile, saveCalibrationAs, loadIrradianceFile } from '../core/files'
 import { applyTrimPreset, connectCamera, disconnectCamera } from '../app/engine'
+// 16×16 icons extracted verbatim from the VB.NET Form1.resx (Theremino Spectrometer)
+import icoLoadDataFile from './icons/loadDataFile.png'
+import icoLoadCalibration from './icons/loadCalibration.png'
+import icoSaveCalibrationAs from './icons/saveCalibrationAs.png'
+import icoLoadIrradianceCoeffs from './icons/loadIrradianceCoeffs.png'
+import icoHelpLinkToFiles from './icons/helpLinkToFiles.png'
+import icoHelpOpenProgramFolder from './icons/helpOpenProgramFolder.png'
+import flagENG from './icons/flagENG.png'
+import flagITA from './icons/flagITA.png'
+import flagFRA from './icons/flagFRA.png'
+import flagPOR from './icons/flagPOR.png'
+import flagCHI from './icons/flagCHI.png'
+
+// Language menu flags per Form1.resx (CHT is a web addition — it reuses the CHI flag)
+const LANGUAGE_FLAGS: Record<string, string> = {
+  ENG: flagENG,
+  ITA: flagITA,
+  FRA: flagFRA,
+  POR: flagPOR,
+  CHI: flagCHI,
+  CHT: flagCHI,
+}
 
 interface MenuDef {
   key: string
@@ -26,14 +48,15 @@ export function MenuBar({ onAbout }: { onAbout: () => void }) {
     return () => window.removeEventListener('mousedown', close)
   }, [])
 
-  const item = (label: string, onClick?: () => void, checked?: boolean) => (
+  const item = (label: string, onClick?: () => void, checked?: boolean, icon?: string) => (
     <div
-      className={`menu-dropdown-item${checked ? ' checked' : ''}`}
+      className={`menu-dropdown-item${checked ? ' checked' : ''}${icon ? ' has-icon' : ''}`}
       onClick={() => {
         setOpen(null)
         onClick?.()
       }}
     >
+      {icon && <img className="menu-icon" src={icon} alt="" draggable={false} />}
       {label}
     </div>
   )
@@ -46,12 +69,12 @@ export function MenuBar({ onAbout }: { onAbout: () => void }) {
       label: t('Menu_File'),
       items: (
         <>
-          {item(t('MenuFile_LoadDataFile'), () => void loadDataFile())}
+          {item(t('MenuFile_LoadDataFile'), () => void loadDataFile(), undefined, icoLoadDataFile)}
           <div className="menu-separator" />
-          {item(t('MenuFile_LoadCalibration'), () => void loadCalibrationFile())}
-          {item(t('MenuFile_SaveCalibrationAs'), () => saveCalibrationAs())}
+          {item(t('MenuFile_LoadCalibration'), () => void loadCalibrationFile(), undefined, icoLoadCalibration)}
+          {item(t('MenuFile_SaveCalibrationAs'), () => saveCalibrationAs(), undefined, icoSaveCalibrationAs)}
           <div className="menu-separator" />
-          {item(t('MenuFile_LoadIrradianceCoeffs'), () => void loadIrradianceFile())}
+          {item(t('MenuFile_LoadIrradianceCoeffs'), () => void loadIrradianceFile(), undefined, icoLoadIrradianceCoeffs)}
         </>
       ),
     },
@@ -97,14 +120,16 @@ export function MenuBar({ onAbout }: { onAbout: () => void }) {
     {
       key: 'lang',
       label: t('Menu_Language'),
-      items: <>{LANGUAGES.map((l) => item(l, () => setSettings({ Language: l }), settings.Language === l))}</>,
+      items: <>{LANGUAGES.map((l) => item(l, () => setSettings({ Language: l }), settings.Language === l, LANGUAGE_FLAGS[l]))}</>,
     },
     {
       key: 'help',
       label: t('Menu_Help'),
       items: (
         <>
-          {item(t('Menu_Help_LinkToFiles'), () => window.open('https://www.theremino.com/en/downloads/automation#spectrometer', '_blank'))}
+          {item(t('Menu_Help_LinkToFiles'), () => window.open('https://www.theremino.com/en/downloads/automation#spectrometer', '_blank'), undefined, icoHelpLinkToFiles)}
+          <div className="menu-separator" />
+          {item(t('Menu_Help_GitHubReadme'), () => window.open('https://github.com/jayden-sudo/WebSpectrometer#readme', '_blank'), undefined, icoHelpOpenProgramFolder)}
         </>
       ),
     },

@@ -2,7 +2,7 @@
 
 [English](../README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [Italiano](README.it.md) | **Français** | [Português](README.pt.md)
 
-Une application de spectromètre DIY qui fonctionne dans le navigateur, dont l'interface et les fonctionnalités s'inspirent de [Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer).
+Une application de spectromètre DIY — un fork de [Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer) V5.0 qui fonctionne dans le navigateur.
 
 **▶ Essayez-le maintenant : [spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)** — aucune installation, ouvrez-le simplement dans Chrome.
 
@@ -40,10 +40,14 @@ Déploiement : importez le dépôt dans Vercel pour un hébergement sans configu
 
 Première utilisation : après avoir connecté la caméra, suivez l'invite pour calibrer avec une lampe fluorescente (Outils → Trim points → Fluorescent 436 546, puis faites glisser les étiquettes 436/546 en haut sur les raies du mercure).
 
+## À propos du domaine
+
+Cette application utilise délibérément le domaine gratuit de Vercel — [spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/) — plutôt qu'un domaine personnalisé : je crains que, dans quelques années, j'oublie de renouveler un domaine acheté et que tous les liens vers ce projet cessent silencieusement de fonctionner ; le sous-domaine gratuit, lui, reste actif tant que le projet existe. Cela dit, si quelqu'un souhaite offrir un domaine court, j'en serais ravi — [contactez-moi en DM](https://x.com/jayden_sudo).
+
 ## Licence
 
-GNU GPL v3. Ce projet n'est pas Theremino Spectrometer et n'est pas affilié à Theremino System ; c'est une implémentation web indépendante dont l'interface et les fonctionnalités s'inspirent de ce logiciel.
+GNU GPL v3. Ce projet est un fork indépendant, fonctionnant dans le navigateur, de Theremino Spectrometer V5.0 et n'est pas affilié à Theremino System.
 
 ## Remerciements
 
-Un grand merci à [www.theremino.com](https://www.theremino.com) et à [Stefano Marchetti](https://www.maestrodartemestiere.it/it/libro-d-oro/2020/stefano-marchetti) — le projet Theremino publie généreusement l'intégralité de son code source et de sa documentation sous une politique « No Copyright ». Sans leur travail remarquable sur les instruments scientifiques open source, ce projet n'existerait pas.
+Un grand merci à [www.theremino.com](https://www.theremino.com) — le projet Theremino publie généreusement l'intégralité de son code source et de sa documentation sous une politique « No Copyright ». Sans leur travail remarquable sur les instruments scientifiques open source, ce projet n'existerait pas.

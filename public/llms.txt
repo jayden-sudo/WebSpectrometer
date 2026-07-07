@@ -32,4 +32,4 @@ Web Spectrometer turns a webcam plus a diffraction grating into a working optica
 
 ## Credits
 
-An AI-assisted implementation created by Jayden (https://x.com/jayden_sudo) with reference to Theremino Spectrometer. UI and functionality inspired by Theremino Spectrometer. Special thanks to www.theremino.com and Stefano Marchetti, whose work is published under a "No Copyright" policy. License: GNU GPL v3.
+An AI-assisted implementation created by Jayden (https://x.com/jayden_sudo) with reference to Theremino Spectrometer. UI and functionality inspired by Theremino Spectrometer. Special thanks to www.theremino.com, whose work is published under a "No Copyright" policy. License: GNU GPL v3.

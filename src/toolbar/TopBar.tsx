@@ -6,6 +6,17 @@ import { getState, setSettings, useAppState } from '../app/store'
 import { useT } from '../i18n'
 import { saveDataFile, saveCanvasImage, saveTotalImage } from '../core/files'
 import { subscribeFrame } from '../app/engine'
+// 16×16 icons extracted verbatim from the VB.NET Form1.resx (Theremino Spectrometer)
+import icoSaveSpectrum from './icons/saveSpectrum.png'
+import icoSaveTotal from './icons/saveTotal.png'
+import icoSaveDataFile from './icons/saveDataFile.png'
+import icoRepeat from './icons/repeat.png'
+import icoOptions from './icons/options.png'
+import icoInfo from './icons/info.png'
+
+const Icon = ({ src }: { src: string }) => (
+  <img className="toolbar-icon" src={src} alt="" draggable={false} />
+)
 
 export function TopBar({ spectrumCanvas }: { spectrumCanvas: () => HTMLCanvasElement | null }) {
   const { settings } = useAppState()
@@ -100,11 +111,13 @@ export function TopBar({ spectrumCanvas }: { spectrumCanvas: () => HTMLCanvasEle
           if (c) saveCanvasImage(c)
         }}
       >
-        📷 {t('Tools_SaveSpectrum')}
+        <Icon src={icoSaveSpectrum} /> {t('Tools_SaveSpectrum')}
       </ToggleButton>
-      <ToggleButton onClick={() => void saveTotalImage()}>📷 {t('Tools_SaveTotal')}</ToggleButton>
+      <ToggleButton onClick={() => void saveTotalImage()}>
+        <Icon src={icoSaveTotal} /> {t('Tools_SaveTotal')}
+      </ToggleButton>
       <ToggleButton active={saveState !== 'idle'} onClick={onSaveDataToggle}>
-        🌸 {saveDataLabel}
+        <Icon src={icoSaveDataFile} /> {saveDataLabel}
       </ToggleButton>
       <select
         value={settings.SaveTime}
@@ -118,17 +131,17 @@ export function TopBar({ spectrumCanvas }: { spectrumCanvas: () => HTMLCanvasEle
         ))}
       </select>
       <ToggleButton active={settings.Repeat} onClick={() => setSettings({ Repeat: !settings.Repeat })}>
-        🌸 {t('Tools_Repeat')}
+        <Icon src={icoRepeat} /> {t('Tools_Repeat')}
       </ToggleButton>
       <div style={{ flex: 1 }} />
       <ToggleButton
         active={settings.OptionsVisible}
         onClick={() => setSettings({ OptionsVisible: !settings.OptionsVisible })}
       >
-        ⚙ {t('Tools_Options')}
+        <Icon src={icoOptions} /> {t('Tools_Options')}
       </ToggleButton>
       <ToggleButton active={settings.InfoVisible} onClick={() => setSettings({ InfoVisible: !settings.InfoVisible })}>
-        📋 {t('Tools_Info')}
+        <Icon src={icoInfo} /> {t('Tools_Info')}
       </ToggleButton>
     </div>
   )

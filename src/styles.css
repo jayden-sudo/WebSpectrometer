@@ -1,4 +1,4 @@
-/* 全域樣式 — 色票全部取自原始碼(TECHNICAL_GUIDE §3.1) */
+/* Global styles — all colors taken from the original source (TECHNICAL_GUIDE §3.1) */
 
 * {
   box-sizing: border-box;
@@ -27,7 +27,7 @@ body {
   height: 100%;
 }
 
-/* 選單列:水平漸層 RGB(230,230,230) → (200,200,200) */
+/* Menu bar: horizontal gradient RGB(230,230,230) → (200,200,200) */
 .menu-bar {
   display: flex;
   background: linear-gradient(to right, rgb(230, 230, 230), rgb(200, 200, 200));
@@ -74,6 +74,26 @@ body {
   left: 10px;
 }
 
+/* 16×16 icon column, mirrors the WinForms ToolStripMenuItem image margin */
+.menu-icon {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated; /* keep the original VB.NET bitmaps crisp */
+}
+
+/* Selected item with an icon: mimic the VB.NET language menu item.Select() highlight row, no ✓ */
+.menu-dropdown-item.checked.has-icon::before {
+  content: none;
+}
+
+.menu-dropdown-item.checked.has-icon {
+  background: rgb(255, 231, 162);
+}
+
 .menu-separator {
   height: 1px;
   background: rgb(200, 200, 200);
@@ -97,7 +117,31 @@ body {
   padding: 2px 0;
 }
 
-/* 工具列:垂直漸層 White → RGB(200,200,200) */
+/* Toolbar button icons: original 16×16 bitmaps from the VB.NET ToolStrip */
+.toolbar-icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: -3px;
+  image-rendering: pixelated;
+}
+
+/* Video Input Controls slider-row icons: VB.NET MyButton 46×26, SideImage 30×26 */
+.video-control-label {
+  display: inline-flex;
+  width: 46px;
+  height: 26px;
+  align-items: center;
+  justify-content: flex-start;
+  flex: none;
+}
+
+.video-control-icon {
+  width: 30px;
+  height: 26px;
+  object-fit: contain;
+}
+
+/* Toolbar: vertical gradient White → RGB(200,200,200) */
 .top-bar {
   display: flex;
   align-items: center;
@@ -107,7 +151,7 @@ body {
   border-bottom: 1px solid rgb(180, 180, 180);
 }
 
-/* 切換鈕漸層(CBlendItems) */
+/* Toggle button gradient (CBlendItems) */
 .toggle-btn {
   font: inherit;
   padding: 3px 10px;
@@ -137,7 +181,7 @@ body {
   filter: brightness(0.95);
 }
 
-/* GroupBox 面板:底色 RGB(255,245,210) */
+/* GroupBox panel: background RGB(255,245,210) */
 .group-box {
   background: rgb(255, 245, 210);
   border: 1px solid rgb(190, 180, 150);
@@ -157,7 +201,7 @@ body {
   font-size: 12px;
 }
 
-/* 數值框:FloralWhite 底、虛線邊框 */
+/* Numeric box: FloralWhite background, dashed border */
 .numeric-box {
   font: inherit;
   background: rgb(255, 250, 240);
@@ -174,7 +218,7 @@ body {
   background: rgb(255, 200, 110);
 }
 
-/* 文字框/下拉 */
+/* Text boxes / dropdowns */
 .text-box,
 select {
   font: inherit;
@@ -191,7 +235,7 @@ input[readonly].text-box {
   color: rgb(90, 90, 90);
 }
 
-/* 主佈局 */
+/* Main layout */
 .main-area {
   flex: 1;
   display: flex;
@@ -218,7 +262,7 @@ input[readonly].text-box {
   min-width: 0;
 }
 
-/* 光譜區 */
+/* Spectrum area */
 .spectrum-area {
   flex: 1;
   min-height: 0;
@@ -235,7 +279,7 @@ input[readonly].text-box {
   border: 1px solid rgb(180, 180, 180);
 }
 
-/* Sensor samples 預覽:DimGray 底 */
+/* Sensor samples preview: DimGray background */
 .sensor-preview {
   background: rgb(105, 105, 105);
   position: relative;
@@ -250,7 +294,7 @@ input[readonly].text-box {
   height: 100%;
 }
 
-/* 底部狀態列 */
+/* Bottom status bar */
 .status-bar {
   display: flex;
   align-items: center;
@@ -273,7 +317,7 @@ input[readonly].text-box {
   padding: 1px 6px;
 }
 
-/* Info 浮動視窗 */
+/* Info floating window */
 .info-window {
   position: fixed;
   width: 300px;
@@ -303,7 +347,7 @@ input[readonly].text-box {
   white-space: pre;
 }
 
-/* 視訊控制浮動面板 */
+/* Video controls floating panel */
 .video-controls-window {
   position: fixed;
   background: rgb(255, 245, 210);

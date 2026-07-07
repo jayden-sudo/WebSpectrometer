@@ -4,23 +4,38 @@ import { useCallback, useEffect, useState } from 'react'
 import { FloatingWindow } from '../components/FloatingWindow'
 import { camera } from '../app/engine'
 import { useT } from '../i18n'
+// 32×32 slider icons extracted verbatim from the VB.NET Form_VideoInControls.resx (MyButton SideImage)
+import icoExposure from './icons/Exposure.png'
+import icoGain from './icons/Gain.png'
+import icoBrightness from './icons/Brightness.png'
+import icoContrast from './icons/Contrast.png'
+import icoGamma from './icons/Gamma.png'
+import icoBackLight from './icons/BackLight.png'
+import icoSaturation from './icons/Saturation.png'
+import icoWhiteBalance from './icons/WhiteBalance.png'
+import icoHue from './icons/Hue.png'
+import icoZoom from './icons/Zoom.png'
+import icoPan from './icons/Pan.png'
+import icoTilt from './icons/Tilt.png'
+import icoSharpness from './icons/Sharpness.png'
+import icoFocus from './icons/Focus.png'
 
 // Capability rows in the original program's order (mapping to UVC controls)
-const CONTROL_ORDER: { key: string; label: string; autoKey?: string }[] = [
-  { key: 'exposureTime', label: 'Exposure', autoKey: 'exposureMode' },
-  { key: 'gain', label: 'Gain' },
-  { key: 'brightness', label: 'Brightness' },
-  { key: 'contrast', label: 'Contrast' },
-  { key: 'gamma', label: 'Gamma' },
-  { key: 'backlightCompensation', label: 'Backlight' },
-  { key: 'saturation', label: 'Saturation' },
-  { key: 'colorTemperature', label: 'WhiteBalance', autoKey: 'whiteBalanceMode' },
-  { key: 'hue', label: 'Hue' },
-  { key: 'zoom', label: 'Zoom' },
-  { key: 'pan', label: 'Pan' },
-  { key: 'tilt', label: 'Tilt' },
-  { key: 'sharpness', label: 'Sharpness' },
-  { key: 'focusDistance', label: 'Focus', autoKey: 'focusMode' }, // VB Focus slider + Auto
+const CONTROL_ORDER: { key: string; label: string; icon: string; autoKey?: string }[] = [
+  { key: 'exposureTime', label: 'Exposure', icon: icoExposure, autoKey: 'exposureMode' },
+  { key: 'gain', label: 'Gain', icon: icoGain },
+  { key: 'brightness', label: 'Brightness', icon: icoBrightness },
+  { key: 'contrast', label: 'Contrast', icon: icoContrast },
+  { key: 'gamma', label: 'Gamma', icon: icoGamma },
+  { key: 'backlightCompensation', label: 'Backlight', icon: icoBackLight },
+  { key: 'saturation', label: 'Saturation', icon: icoSaturation },
+  { key: 'colorTemperature', label: 'WhiteBalance', icon: icoWhiteBalance, autoKey: 'whiteBalanceMode' },
+  { key: 'hue', label: 'Hue', icon: icoHue },
+  { key: 'zoom', label: 'Zoom', icon: icoZoom },
+  { key: 'pan', label: 'Pan', icon: icoPan },
+  { key: 'tilt', label: 'Tilt', icon: icoTilt },
+  { key: 'sharpness', label: 'Sharpness', icon: icoSharpness },
+  { key: 'focusDistance', label: 'Focus', icon: icoFocus, autoKey: 'focusMode' }, // VB Focus slider + Auto
 ]
 
 interface CapRange {
@@ -93,8 +108,9 @@ export function VideoControlsWindow({ onClose }: { onClose: () => void }) {
           const isExposure = c.key === 'exposureTime'
           return (
             <div className="field-row" key={c.key}>
-              <span className="field-label" style={{ width: 78 }}>
-                {c.label}
+              {/* VB.NET: 46×26 icon-only MyButton with the SideImage; label kept as tooltip */}
+              <span className="field-label video-control-label" title={c.label}>
+                <img className="video-control-icon" src={c.icon} alt={c.label} draggable={false} />
               </span>
               <input
                 type="range"

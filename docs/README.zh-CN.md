@@ -2,7 +2,7 @@
 
 [English](../README.md) | **简体中文** | [繁體中文](README.zh-TW.md) | [Italiano](README.it.md) | [Français](README.fr.md) | [Português](README.pt.md)
 
-一款运行在浏览器中的 DIY 光谱仪软件,UI 与功能参考 [Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer) 设计。
+一款 DIY 光谱仪软件——[Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer) V5.0 的 fork 版本,可直接在浏览器中运行。
 
 **▶ 在线使用:[spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)**——无需安装,用 Chrome 打开即可。
 
@@ -40,10 +40,14 @@ npm run build    # 构建产物在 dist/
 
 首次使用:连接摄像头后按提示用荧光灯完成校准(工具 → 校准点 → 荧光 436 546,然后拖动顶部 436/546 标签对准汞谱线)。
 
+## 域名说明
+
+本站刻意使用 Vercel 的免费域名 [spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/),而不是购买独立域名:我担心几年后自己买的域名因为忘记续费而失效,导致所有链接无法访问;免费子域名则会与项目一直存活下去。当然,如果有人愿意提供一个简短的域名,我非常欢迎——请[私信我](https://x.com/jayden_sudo)。
+
 ## 授权
 
-GNU GPL v3。本项目不是 Theremino Spectrometer,与 Theremino System 无隶属关系;它是一款界面与功能参考该软件的独立 Web 实现。
+GNU GPL v3。本项目是 Theremino Spectrometer V5.0 的独立浏览器版 fork,与 Theremino System 无隶属关系。
 
 ## 致谢
 
-特别感谢 [www.theremino.com](https://www.theremino.com) 与 [Stefano Marchetti](https://www.maestrodartemestiere.it/it/libro-d-oro/2020/stefano-marchetti)——Theremino 项目以"No Copyright"方式无私公开了全部源码与文档,没有他们在开源科学仪器上的卓越工作,就不会有这个项目。
+特别感谢 [www.theremino.com](https://www.theremino.com) ——Theremino 项目以"No Copyright"方式无私公开了全部源码与文档,没有他们在开源科学仪器上的卓越工作,就不会有这个项目。

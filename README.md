@@ -2,7 +2,7 @@
 
 **English** | [简体中文](docs/README.zh-CN.md) | [繁體中文](docs/README.zh-TW.md) | [Italiano](docs/README.it.md) | [Français](docs/README.fr.md) | [Português](docs/README.pt.md)
 
-A DIY spectrometer application that runs in your browser, with UI and features inspired by [Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer).
+A DIY spectrometer application — a fork of [Theremino Spectrometer](https://www.theremino.com/en/downloads/automation#spectrometer) V5.0 that runs in your browser.
 
 **▶ Try it now: [spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/)** — no installation, just open it in Chrome.
 
@@ -40,10 +40,14 @@ Deployment: import the repo into Vercel for zero-config hosting (camera access r
 
 First use: after connecting the camera, follow the prompt to calibrate with a fluorescent lamp (Tools → Trim points → Fluorescent 436 546, then drag the 436/546 labels at the top onto the mercury lines).
 
+## About the domain
+
+This app deliberately lives on Vercel's free domain — [spectrometer-web.vercel.app](https://spectrometer-web.vercel.app/) — instead of a custom one. My concern is that years from now I might forget to renew a purchased domain, and every link to this project would silently die; the free subdomain stays alive as long as the project does. That said, if anyone would like to offer a short domain, I'd be very happy to use it — [DM me](https://x.com/jayden_sudo).
+
 ## License
 
-GNU GPL v3. This project is not Theremino Spectrometer and is not affiliated with Theremino System; it is an independent web implementation whose UI and features are inspired by that software.
+GNU GPL v3. This project is an independent, browser-based fork of Theremino Spectrometer V5.0 and is not affiliated with Theremino System.
 
 ## Acknowledgements
 
-Special thanks to [www.theremino.com](https://www.theremino.com) and [Stefano Marchetti](https://www.maestrodartemestiere.it/it/libro-d-oro/2020/stefano-marchetti) — the Theremino project generously publishes all of its source code and documentation under a "No Copyright" policy. Without their outstanding work on open-source scientific instruments, this project would not exist.
+Special thanks to [www.theremino.com](https://www.theremino.com) — the Theremino project generously publishes all of its source code and documentation under a "No Copyright" policy. Without their outstanding work on open-source scientific instruments, this project would not exist.
